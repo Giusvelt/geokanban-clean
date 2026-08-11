@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoKanban V3 - Technical Brochure</title>
+    <style>
+        :root {
+            --glass: rgba(15, 23, 42, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --accent: #3b82f6;
+            --text-light: #f8fafc;
+            --text-dim: #cbd5e1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background: #020617;
+            color: var(--text-light);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        /* The Background Image - Centered */
+        .backdrop {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('./assets/digital-twin.png');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+
+        /* Dark overlay to help text but kept light in the center */
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, transparent 20%, rgba(2, 6, 23, 0.8) 100%);
+            z-index: 0;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        header {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #fff 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-tag {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-left: 2px solid var(--accent);
+            padding-left: 15px;
+        }
+
+        /* Side Highlights */
+        .main-body {
+            flex-grow: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none; /* Let the center be visible/clickable */
+        }
+
+        .side-panel {
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            pointer-events: auto;
+        }
+
+        .info-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.3s;
+        }
+
+        .info-card:hover {
+            transform: scale(1.02);
+            border-color: var(--accent);
+        }
+
+        .info-card h3 {
+            color: var(--accent);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card p {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--text-dim);
+        }
+
+        /* Bottom Feature Registry */
+        footer {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 25px 40px;
+            margin-top: 20px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+
+        .mini-feature h4 {
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            color: #fff;
+        }
+
+        .mini-feature p {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            line-height: 1.4;
+        }
+
+        .center-label {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .center-label h2 {
+            font-size: 0.8rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+    </style>
+</head>
+<body>
+    <div class="backdrop"></div>
+    <div class="overlay"></div>
+
+    <div class="content-wrapper">
+        <header>
+            <h1>GeoKanban V3</h1>
+            <div class="header-tag">Maritime Digital Twin Integration</div>
+        </header>
+
+        <div class="main-body">
+            <div class="side-panel left">
+                <div class="info-card">
+                    <h3>🛰️ Geospatial Intelligence</h3>
+                    <p>PostGIS-driven polygonal geofencing with sub-meter precision. Automatic detection of port arrivals, departures, and cargo operations.</p>
+                </div>
+                <div class="info-card">
+                    <h3>🛡️ Security Blueprint</h3>
+                    <p>Row-Level Security (RLS) and MFA protocols. Tamper-proof logs with SHA-256 digital signatures for full legal non-repudiation.</p>
+                </div>
+            </div>
+
+            <div class="center-label">
+                <h2>Operational Core</h2>
+            </div>
+
+            <div class="side-panel right">
+                <div class="info-card">
+                    <h3>📈 Performance Optimizer</h3>
+                    <p>Backend compute engine utilizing SQL materialized views. Delivery of complex fleet analytics in milliseconds to any mobile device.</p>
+                </div>
+                <div class="info-card">
+                    <h3>📱 Multi-Device Audit</h3>
+                    <p>Advanced Fingerprinting technology capturing User-Agent and Persistent Device IDs to distinguish shared account accesses.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-grid">
+                <div class="mini-feature">
+                    <h4>PWA Desktop & Mobile</h4>
+                    <p>Installable experience on iOS, Android, and Windows with offline support and touch-first Nautical Time Picker.</p>
+                </div>
+                <div class="mini-feature">
+                    <h4>Smart Logic Engine</h4>
+                    <p>Automated trip counting (Radius vs Polygon) and AIS-logbook data merging for zero-manual-error reporting.</p>
+                </div>
+                <div class="mini-feature">
+                    <h4>Fleet Manager Portal</h4>
+                    <p>Centralized view of all production targets, weather conditions, and vessel status in a single interactive dashboard.</p>
+                </div>
+                <div class="mini-feature">
+                    <h4>Custom BI Reporting</h4>
+                    <p>Exportable professional reports with full traceability and operational historical data analysis.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

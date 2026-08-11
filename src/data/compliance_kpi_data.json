@@ -1,0 +1,290 @@
+[
+  {
+    "Data": "2026-07-29",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 12,
+    "Task Consuntivati (N)": 9,
+    "Deficit Task (TDI)": 3,
+    "Aderenza Programma (TER %)": 75.0
+  },
+  {
+    "Data": "2026-07-28",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 12,
+    "Task Consuntivati (N)": 4,
+    "Deficit Task (TDI)": 8,
+    "Aderenza Programma (TER %)": 33.3
+  },
+  {
+    "Data": "2026-07-27",
+    "Stato Cantiere": "FERMO METEO",
+    "Task Programmati (N)": 6,
+    "Task Consuntivati (N)": 1,
+    "Deficit Task (TDI)": 5,
+    "Aderenza Programma (TER %)": 16.7
+  },
+  {
+    "Data": "2026-07-25",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 10,
+    "Task Consuntivati (N)": 4,
+    "Deficit Task (TDI)": 6,
+    "Aderenza Programma (TER %)": 40.0
+  },
+  {
+    "Data": "2026-07-24",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 8,
+    "Task Consuntivati (N)": 6,
+    "Deficit Task (TDI)": 2,
+    "Aderenza Programma (TER %)": 75.0
+  },
+  {
+    "Data": "2026-07-19",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 3,
+    "Task Consuntivati (N)": 3,
+    "Deficit Task (TDI)": 0,
+    "Aderenza Programma (TER %)": 100.0
+  },
+  {
+    "Data": "2026-07-18",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 4,
+    "Task Consuntivati (N)": 2,
+    "Deficit Task (TDI)": 2,
+    "Aderenza Programma (TER %)": 50.0
+  },
+  {
+    "Data": "2026-07-15",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 9,
+    "Task Consuntivati (N)": 9,
+    "Deficit Task (TDI)": 0,
+    "Aderenza Programma (TER %)": 100.0
+  },
+  {
+    "Data": "2026-07-09",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 11,
+    "Task Consuntivati (N)": 10,
+    "Deficit Task (TDI)": 1,
+    "Aderenza Programma (TER %)": 90.9
+  },
+  {
+    "Data": "2026-06-30",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 10,
+    "Task Consuntivati (N)": 5,
+    "Deficit Task (TDI)": 5,
+    "Aderenza Programma (TER %)": 50.0
+  },
+  {
+    "Data": "2026-06-25",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 12,
+    "Task Consuntivati (N)": 9,
+    "Deficit Task (TDI)": 3,
+    "Aderenza Programma (TER %)": 75.0
+  },
+  {
+    "Data": "2026-06-23",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 9,
+    "Task Consuntivati (N)": 8,
+    "Deficit Task (TDI)": 1,
+    "Aderenza Programma (TER %)": 88.9
+  },
+  {
+    "Data": "2026-06-20",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 11,
+    "Task Consuntivati (N)": 7,
+    "Deficit Task (TDI)": 4,
+    "Aderenza Programma (TER %)": 63.6
+  },
+  {
+    "Data": "2026-06-19",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 11,
+    "Task Consuntivati (N)": 8,
+    "Deficit Task (TDI)": 3,
+    "Aderenza Programma (TER %)": 72.7
+  },
+  {
+    "Data": "2026-06-18",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 12,
+    "Task Consuntivati (N)": 8,
+    "Deficit Task (TDI)": 4,
+    "Aderenza Programma (TER %)": 66.7
+  },
+  {
+    "Data": "2026-06-17",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 12,
+    "Task Consuntivati (N)": 9,
+    "Deficit Task (TDI)": 3,
+    "Aderenza Programma (TER %)": 75.0
+  },
+  {
+    "Data": "2026-06-11",
+    "Stato Cantiere": "FERMO METEO",
+    "Task Programmati (N)": 12,
+    "Task Consuntivati (N)": 0,
+    "Deficit Task (TDI)": 12,
+    "Aderenza Programma (TER %)": 0.0
+  },
+  {
+    "Data": "2026-06-10",
+    "Stato Cantiere": "FERMO METEO",
+    "Task Programmati (N)": 9,
+    "Task Consuntivati (N)": 0,
+    "Deficit Task (TDI)": 9,
+    "Aderenza Programma (TER %)": 0.0
+  },
+  {
+    "Data": "2026-06-08",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 9,
+    "Task Consuntivati (N)": 9,
+    "Deficit Task (TDI)": 0,
+    "Aderenza Programma (TER %)": 100.0
+  },
+  {
+    "Data": "2026-06-05",
+    "Stato Cantiere": "FERMO METEO",
+    "Task Programmati (N)": 8,
+    "Task Consuntivati (N)": 3,
+    "Deficit Task (TDI)": 5,
+    "Aderenza Programma (TER %)": 37.5
+  },
+  {
+    "Data": "2026-06-04",
+    "Stato Cantiere": "FERMO METEO",
+    "Task Programmati (N)": 8,
+    "Task Consuntivati (N)": 2,
+    "Deficit Task (TDI)": 6,
+    "Aderenza Programma (TER %)": 25.0
+  },
+  {
+    "Data": "2026-06-03",
+    "Stato Cantiere": "FERMO METEO",
+    "Task Programmati (N)": 6,
+    "Task Consuntivati (N)": 3,
+    "Deficit Task (TDI)": 3,
+    "Aderenza Programma (TER %)": 50.0
+  },
+  {
+    "Data": "2026-05-29",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 9,
+    "Task Consuntivati (N)": 8,
+    "Deficit Task (TDI)": 1,
+    "Aderenza Programma (TER %)": 88.9
+  },
+  {
+    "Data": "2026-05-28",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 10,
+    "Task Consuntivati (N)": 10,
+    "Deficit Task (TDI)": 0,
+    "Aderenza Programma (TER %)": 100.0
+  },
+  {
+    "Data": "2026-05-27",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 9,
+    "Task Consuntivati (N)": 7,
+    "Deficit Task (TDI)": 2,
+    "Aderenza Programma (TER %)": 77.8
+  },
+  {
+    "Data": "2026-05-23",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 12,
+    "Task Consuntivati (N)": 10,
+    "Deficit Task (TDI)": 2,
+    "Aderenza Programma (TER %)": 83.3
+  },
+  {
+    "Data": "2026-05-21",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 11,
+    "Task Consuntivati (N)": 11,
+    "Deficit Task (TDI)": 0,
+    "Aderenza Programma (TER %)": 100.0
+  },
+  {
+    "Data": "2026-05-20",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 11,
+    "Task Consuntivati (N)": 9,
+    "Deficit Task (TDI)": 2,
+    "Aderenza Programma (TER %)": 81.8
+  },
+  {
+    "Data": "2026-05-19",
+    "Stato Cantiere": "FERMO METEO",
+    "Task Programmati (N)": 9,
+    "Task Consuntivati (N)": 5,
+    "Deficit Task (TDI)": 4,
+    "Aderenza Programma (TER %)": 55.6
+  },
+  {
+    "Data": "2026-05-16",
+    "Stato Cantiere": "FERMO METEO",
+    "Task Programmati (N)": 0,
+    "Task Consuntivati (N)": 3,
+    "Deficit Task (TDI)": 0,
+    "Aderenza Programma (TER %)": 100.0
+  },
+  {
+    "Data": "2026-05-15",
+    "Stato Cantiere": "FERMO METEO",
+    "Task Programmati (N)": 0,
+    "Task Consuntivati (N)": 0,
+    "Deficit Task (TDI)": 0,
+    "Aderenza Programma (TER %)": 0.0
+  },
+  {
+    "Data": "2026-05-14",
+    "Stato Cantiere": "FERMO METEO",
+    "Task Programmati (N)": 0,
+    "Task Consuntivati (N)": 0,
+    "Deficit Task (TDI)": 0,
+    "Aderenza Programma (TER %)": 0.0
+  },
+  {
+    "Data": "2026-05-13",
+    "Stato Cantiere": "FERMO METEO",
+    "Task Programmati (N)": 1,
+    "Task Consuntivati (N)": 1,
+    "Deficit Task (TDI)": 0,
+    "Aderenza Programma (TER %)": 100.0
+  },
+  {
+    "Data": "2026-05-12",
+    "Stato Cantiere": "FERMO METEO",
+    "Task Programmati (N)": 3,
+    "Task Consuntivati (N)": 4,
+    "Deficit Task (TDI)": 0,
+    "Aderenza Programma (TER %)": 133.3
+  },
+  {
+    "Data": "2026-05-08",
+    "Stato Cantiere": "OPERATIVO",
+    "Task Programmati (N)": 9,
+    "Task Consuntivati (N)": 7,
+    "Deficit Task (TDI)": 2,
+    "Aderenza Programma (TER %)": 77.8
+  },
+  {
+    "Data": "2026-05-07",
+    "Stato Cantiere": "FERMO METEO",
+    "Task Programmati (N)": 3,
+    "Task Consuntivati (N)": 2,
+    "Deficit Task (TDI)": 1,
+    "Aderenza Programma (TER %)": 66.7
+  }
+]

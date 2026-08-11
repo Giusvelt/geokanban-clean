@@ -1,0 +1,63 @@
+================================================================================
+          GEOKANBAN V3.15: DIGITAL TWIN E MONITORAGGIO INTELLIGENTE
+================================================================================
+
+PROPOSTA TECNICA MIGLIORATIVA: MONITORAGGIO DIGITALE INTEGRATO
+--------------------------------------------------------------------------------
+PROGETTO: Dragaggio del Porto di La Spezia (300.000 mc) e 
+          Conferimento alla Nuova Diga di Genova.
+--------------------------------------------------------------------------------
+
+1. VISIONE GENERALE: IL DIGITAL TWIN DEL CANTIERE
+--------------------------------------------------------------------------------
+GeoKanban v3.15 non è un semplice software di tracciamento, ma un Digital Twin 
+(Gemello Digitale) operativo. Una piattaforma web-based che integra dati AIS, 
+sensori di bordo e algoritmi di Geofencing per creare una replica virtuale in 
+tempo reale di tutte le attività di dragaggio e trasporto.
+
+VANTAGGIO COMPETITIVO: 
+La trasparenza totale dei dati permette una drastica riduzione delle controversie 
+sui volumi movimentati e un'ottimizzazione dei tempi di attesa tra i siti di 
+carico (La Spezia) e scarico (Genova).
+
+2. FUNZIONALITÀ CHIAVE E IMMAGINI DIMOSTRATIVE
+--------------------------------------------------------------------------------
+
+A. AUTOMAZIONE DEI CICLI VIA AI (GEOFENCING 2.0)
+Il sistema riconosce automaticamente l'inizio e la fine di ogni fase (Carico, 
+Navigazione, Scarico) senza intervento umano. La flotta (es. Marmore, Niagara) 
+viene monitorata con precisione al minuto.
+
+[Vedere Figura 1 nel documento originale: Dashboard delle attività in tempo reale]
+
+B. CONTROLLO PRODUZIONE E OBIETTIVI (KPI DASHBOARD)
+Il monitoraggio del target di 300.000 mc è integrato nativamente. Il sistema 
+confronta costantemente il "Target" con il "Delivered (Est.)", calcolato sulla 
+base dei cicli certificati (20% già stimato).
+
+[Vedere Figura 2 nel documento originale: Analisi del progresso 20%]
+
+C. CONTROLLO GEOGRAFICO E INTERFERENZE
+La vista cartografica permette di visualizzare la "catena logistica" tra 
+La Spezia e Genova, identificando colli di bottiglia o aree di attesa eccessiva 
+nelle zone di transito dell'Alto Tirreno.
+
+[Vedere Figura 3 nel documento originale: Mappa Operativa Georeferenziata]
+
+3. RACCOLTA DATI E STRUMENTI DIGITALI (AI & DASHBOARD)
+--------------------------------------------------------------------------------
+- AI-DRIVEN ANALYTICS: Algoritmi predittivi che stimano il tempo di arrivo (ETA) 
+  basandosi sulle performance storiche dei cicli precedenti.
+- DIGITAL TWIN: Ogni viaggio genera un "Certificato di Conferimento Digitale" 
+  che garantisce l'integrità della filiera.
+- REPORTING AVANZATO: Esportazione automatica di report giornalieri e 
+  mensili pronti per la Direzione Lavori.
+
+4. CONCLUSIONE
+--------------------------------------------------------------------------------
+L'adozione di GeoKanban v3.15 garantisce un monitoraggio di estrema precisione, 
+riducendo l'impronta ambientale grazie all'ottimizzazione delle rotte e 
+fornendo all'Ente Appaltante uno strumento di controllo moderno, sicuro 
+e basato su dati oggettivi.
+
+================================================================================

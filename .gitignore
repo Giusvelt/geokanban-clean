@@ -1,0 +1,55 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+.vercel
+.env*.local
+scratch/
+scratch_*
+*.xlsx
+*.kmz
+*.zip
+pra_extracted/
+.env.sandbox
+sandbox-ui/
+luca lamberti production targets.jpeg
+*.jpeg
+*.jpg
+
+# Baileys WhatsApp Session Files & Dumps
+auth_info_baileys/
+episodic_dump.txt
+__pycache__/
+*.pyc
+
+
+# Backup and Junk for Graphify
+Handover_geokanban_260328_git/
+staging_final/
+antigravity_history/
+whatsapp_exports/
+repo/
+Recovered_Chat_Second_Brain.txt
+CHANGELOG_GIT*.txt
+repo_map.txt

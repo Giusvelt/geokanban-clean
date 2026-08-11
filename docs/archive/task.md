@@ -1,0 +1,50 @@
+# Redesign Master Data & Architettura Flotta
+
+- [x] **Pianificazione & Design dello Schema**
+    - [x] Creazione piano di implementazione per architettura Companies/Fleet
+    - [x] Progettazione schema SQL esteso per la tabella `companies` (P.IVA, Indirizzo, etc.)
+- [x] **Migrazioni Database**
+    - [x] Aggiunta campi estesi alla tabella `companies`
+    - [x] Creazione/Aggiornamento tabella `vessels` con foreign key `company_id`
+    - [x] Popolamento dati iniziali per dimostrazione
+- [x] **Professionalizzazione UI (Kinetic Design)**
+    - [x] Aggiornamento header/etichette in `DBManager.jsx`
+    - [x] Aggiornamento header/etichette in `RewindMapTab.jsx`
+    - [x] Aggiornamento header/etichette in `ProductionTargetTab.jsx`
+    - [x] Aggiornamento header/etichette in `StandbySchedule.jsx`
+- [x] **Gestione Master Data (DB Manager)**
+    - [x] Implementazione CRUD per `Companies` (Fornitori/Armatori) con dettagli completi
+    - [x] Aggiornamento gestione `Vessels` per includere la selezione dell'Azienda
+- [x] **Verifica & Testing**
+    - [x] Verifica finale su localhost:5174
+- [x] Riparazione Rendering RewindMapTab
+    - [x] Riscrittura JSX
+    - [x] Ottimizzazione logica tempo
+- [x] Inserimento Sezione ADV "Crew Essentials" (Spostato su Mobile)
+    - [x] Rimozione da Dashboard Web
+    - [x] Creazione MobileCrewNews.jsx
+    - [x] Integrazione tab in App.jsx per Crew
+    - [x] Verifica consistenza UI
+- [x] Phase 3: Ottimizzazione Logica e Header
+    - [x] Modifica logica Mobile in App.jsx (Crew su Desktop)
+    - [x] Ottimizzazione spazi Toolbar VesselActivityTab
+    - [x] Blindatura permessi Crew (Niente KPI/Tabs su Desktop)
+    - [x] Verifica finale consistenza
+- [x] Phase 5: Allineamento Geofencing Poligonale (DONE)
+    - [x] Aggiornamento trigger `016_restore_polygon_geofencing.sql`
+    - [x] Uso `polygon` (GEOMETRY) PostGIS
+    - [x] Rimozione definitiva raggio (radius)
+- [x] Phase 6: Trasformazione PWA (DONE)
+    - [x] Configurazione `vite-plugin-pwa`
+    - [x] Generazione icone (192, 512)
+    - [x] Manifest sincronizzato
+- [x] Phase 7: Debug Mappa & Messaggi (DONE)
+    - [x] Correzione `DataContext.jsx` per recupero ultime posizioni note
+    - [x] Implementazione indicatori "Stale" (Ambra) in `VesselMap.jsx`
+    - [x] Fix colore blu scuro in `VesselActivityTab.jsx`
+    - [x] Riparazione prop-drilling in `App.jsx` per inizializzazione mappa
+    - [x] Verifica finale su produzione Vercel
+- [/] Phase 4: Miglioramento UX Mobile Crew
+    - [ ] Sessione Full-Screen (Standalone mode)
+    - [ ] Ottimizzazione salvataggi (Logbook saving feedback/vibration/sync)
+    - [ ] Miglioramento input density in LogbookWriter
