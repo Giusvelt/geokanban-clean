@@ -37,4 +37,17 @@ export default defineConfig({
     setupFiles: './src/setupTests.js',
     css: true,
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor chunks — cached independently by the browser across deploys
+          'vendor-framer':  ['framer-motion'],
+          'vendor-leaflet': ['leaflet', 'react-leaflet'],
+          'vendor-recharts':['recharts'],
+          'vendor-xlsx':    ['xlsx'],
+        },
+      },
+    },
+  },
 })

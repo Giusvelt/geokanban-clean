@@ -5,11 +5,12 @@ import { supabase } from './lib/supabase';
 import { useUserProfile } from './hooks/useUserProfile';
 import { useSessionLock } from './hooks/useSessionLock';
 import { can, ROLES } from './lib/permissions';
-import LandingPage from './components/LandingPage';
-import VesselMap from './components/VesselMap';
-import TelemetryStatusIndicator from './components/TelemetryStatusIndicator';
-import WeatherStatusIndicator from './components/WeatherStatusIndicator';
+const LandingPage            = lazy(() => import('./components/LandingPage'));
+const VesselMap               = lazy(() => import('./components/VesselMap'));
+const TelemetryStatusIndicator = lazy(() => import('./components/TelemetryStatusIndicator'));
+const WeatherStatusIndicator  = lazy(() => import('./components/WeatherStatusIndicator'));
 import TabLoadingSkeleton from './components/TabLoadingSkeleton';
+
 
 
 const VesselActivityTab = lazy(() => import('./components/VesselActivityTab'));
@@ -173,8 +174,8 @@ function ActivityDashboard({ onSignOut }) {
             </div>
           )}
           <div className="flex items-center gap-3">
-            <TelemetryStatusIndicator />
-            <WeatherStatusIndicator />
+            <Suspense fallback={null}><TelemetryStatusIndicator /></Suspense>
+            <Suspense fallback={null}><WeatherStatusIndicator /></Suspense>
           </div>
           <button onClick={() => setShowProfile(true)} className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-gradient-to-br from-surface-low to-surface-lowest flex items-center justify-center border border-white shadow-sm active:scale-90 transition-transform"><div className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary lg:text-lg">{(profile?.displayName || 'G')[0]}</div></button>
         </div>
@@ -189,7 +190,9 @@ function ActivityDashboard({ onSignOut }) {
               <span className="text-[10px] font-black text-sky-700 uppercase tracking-widest leading-none">T+1 Certified Historical Tracker</span>
             </div>
             <div className="rounded-[1.5rem] overflow-hidden border border-surface-low/20">
-              <VesselMap height="350px" vesselPositions={vesselPositions} geofences={geofences} offHireVessels={offHireVessels} />
+              <Suspense fallback={<div className="h-[350px] rounded-[1.5rem] bg-slate-100 animate-pulse" />}>
+                <VesselMap height="350px" vesselPositions={vesselPositions} geofences={geofences} offHireVessels={offHireVessels} />
+              </Suspense>
             </div>
           </div>
         )}
@@ -263,6 +266,6 @@ export default function App() {
   }, []);
 
   if (checkingAuth) return <div className="loading-screen"><Anchor size={48} className="spin" /><p>Loading...</p></div>;
-  if (!user) return <LandingPage onLogin={setUser} />;
+  if (!user) return <Suspense fallback={null}><LandingPage onLogin={setUser} /></Suspense>;
   return <DataProvider><ActivityDashboard onSignOut={() => supabase.auth.signOut()} /></DataProvider>;
 }
