@@ -195,7 +195,7 @@ export default function MobileOperatorChat({ profile }) {
                         {chat.vessel}
                      </h4>
                      <span className="text-[10px] font-bold text-on-surface/30">
-                        {lastMsg ? formatTime(lastMsg.created_at) : ''}
+                        {lastMsg ? formatChatTimestamp(lastMsg.created_at) : ''}
                      </span>
                   </div>
                   <p className="text-[11px] font-black text-primary/60 uppercase tracking-widest mb-1 truncate">
@@ -220,7 +220,12 @@ export default function MobileOperatorChat({ profile }) {
   );
 }
 
-function formatTime(ts) {
+/**
+ * formatChatTimestamp — Logica specifica chat: mostra HH:MM se il messaggio
+ * è di oggi, altrimenti mostra GG/MM. Diversa da formatTimeShort (solo ora).
+ * Rimane locale perché questa logica è esclusiva del componente chat.
+ */
+function formatChatTimestamp(ts) {
   const d = new Date(ts);
   const now = new Date();
   if (d.toDateString() === now.toDateString()) {
