@@ -6,43 +6,74 @@ import { useVesselStore } from '../store/useVesselStore';
 import { useActivityStore } from '../store/useActivityStore';
 import { useConfigStore } from '../store/useConfigStore';
 import { useProjectStore } from '../store/useProjectStore';
-// Removed legacy useDatalastic import
 
-const DataContext = createContext();
-export const useData = () => useContext(DataContext);
+// ─── 3 Context slice separati ────────────────────────────────────────────────
+// Dividere il god-context in slice indipendenti riduce i re-render:
+// - un aggiornamento AIS  → solo consumer di useFleet() re-renderizzano
+// - un logbook certificato → solo consumer di useOperations() re-renderizzano
+// - uno schedule approvato → solo consumer di useConfig() re-renderizzano
+//
+// useData() rimane disponibile come alias backward-compat per i 21 consumer
+// esistenti — zero breaking changes, migrazione incrementale possibile.
+// ─────────────────────────────────────────────────────────────────────────────
 
+const FleetContext      = createContext();
+const OperationsContext = createContext();
+const ConfigContext     = createContext();
+
+/** Vessels, posizioni live, tracking realtime, ID equipaggio/compagnia. */
+export const useFleet      = () => useContext(FleetContext);
+
+/** Attività, production plans, geofence, filtri mese/anno, KPI. */
+export const useOperations = () => useContext(OperationsContext);
+
+/** Profilo utente, standby reasons, schedule, permessi. */
+export const useConfig     = () => useContext(ConfigContext);
+
+/**
+ * Hook di compatibilità backward — aggrega i 3 slice.
+ * I 21 componenti esistenti continuano a funzionare senza modifiche.
+ * @deprecated Preferire useFleet() / useOperations() / useConfig() per
+ *             componenti nuovi o refactoring futuri (riduce i re-render).
+ */
+export const useData = () => ({
+    ...useFleet(),
+    ...useOperations(),
+    ...useConfig(),
+});
+
+// ─── DataProvider — unico orchestratore ──────────────────────────────────────
 export function DataProvider({ children }) {
     const { profile } = useUserProfile();
 
-    // Zustand store bindings
-    const { 
-        vessels, vesselPositions, loading: vesselsLoading, 
+    // ── Zustand store bindings ──────────────────────────────────────────────
+    const {
+        vessels, vesselPositions, loading: vesselsLoading,
         fetchVessels, addVessel, updateVessel, deleteVessel,
-        loadHistoricalPositions, updateLivePositions, subscribeToTracking
+        loadHistoricalPositions, updateLivePositions, subscribeToTracking,
     } = useVesselStore();
 
-    const { 
-        geofences, loading: geofencesLoading, 
-        fetchGeofences, addGeofence, updateGeofence, deleteGeofence 
+    const {
+        geofences, loading: geofencesLoading,
+        fetchGeofences, addGeofence, updateGeofence, deleteGeofence,
     } = useGeofenceStore();
 
-    const { 
+    const {
         activities, productionPlans, loading: activitiesLoading, lastUpdate,
         fetchActivities, upsertPlan, deletePlan, fetchPlans,
-        selectedMonth, setSelectedMonth, selectedYear, setSelectedYear
+        selectedMonth, setSelectedMonth, selectedYear, setSelectedYear,
     } = useActivityStore();
 
-    const { 
-        standbyReasons, schedules, 
+    const {
+        standbyReasons, schedules,
         fetchReasons, fetchSchedules, upsertSchedule, deleteSchedule,
         addStandbyReason, updateStandbyReason, deleteStandbyReason,
-        approveSchedule, rejectSchedule
+        approveSchedule, rejectSchedule,
     } = useConfigStore();
 
     const { fetchProjects } = useProjectStore();
 
-    // Replaced legacy useDatalastic hook call with DB-driven tracking
-
+    // ── Computed: ID nave dell'utente crew ──────────────────────────────────
     const crewVesselId = useMemo(() => {
         if (!profile || !vessels?.length) return null;
         if (profile.role !== 'crew') return null;
@@ -61,6 +92,7 @@ export function DataProvider({ children }) {
         return vessels.filter(v => v.company_id === profile.companyId).map(v => v.id);
     }, [profile, vessels]);
 
+    // ── Initial data fetch ──────────────────────────────────────────────────
     useEffect(() => {
         fetchProjects(profile?.id, profile?.role);
         fetchVessels();
@@ -70,7 +102,7 @@ export function DataProvider({ children }) {
         fetchPlans();
     }, [fetchProjects, profile?.id, profile?.role, fetchVessels, fetchGeofences, fetchReasons, fetchSchedules, fetchPlans]);
 
-    // Fetch activities
+    // ── Fetch activities (dipende da role + vessel scope) ───────────────────
     useEffect(() => {
         if (!profile) return;
         let targetId = null;
@@ -84,18 +116,18 @@ export function DataProvider({ children }) {
         fetchActivities(targetId, profile.role, selectedMonth, selectedYear);
     }, [profile, crewVesselId, companyVesselIds, fetchActivities, selectedMonth, selectedYear]);
 
-    // Realtime: Updates KPI when a logbook is certified or activity is inserted
+    // ── Realtime KPI: logbook certificato / attività inserita ───────────────
     useEffect(() => {
         let targetId = null;
-        if (profile?.role === 'crew') targetId = crewVesselId;
+        if (profile?.role === 'crew')       targetId = crewVesselId;
         else if (profile?.role === 'crew_admin') targetId = companyVesselIds;
 
         const channel = supabase
             .channel('kpi-realtime')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'logbook_entries' },
-                () => { 
+                () => {
                     fetchActivities(targetId, profile?.role);
-                    fetchPlans(); // Crucial for Admin KPI sync
+                    fetchPlans(); // Sync KPI Admin
                 }
             )
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'vessel_activity' },
@@ -109,13 +141,13 @@ export function DataProvider({ children }) {
         return () => supabase.removeChannel(channel);
     }, [profile, crewVesselId, companyVesselIds, fetchActivities, fetchPlans]);
 
-    // Realtime Tracking: Replaces direct AIS polling with DB-driven updates
+    // ── Realtime Tracking: DB-driven, con recovery da sleep/offline ─────────
     useEffect(() => {
         if (!vessels?.length || !profile) return;
 
         let visibleVessels = vessels;
         if (profile.role === 'crew' && crewVesselId) {
-            const crewVessel = vessels.find(v => v.id === crewVesselId);
+            const crewVessel    = vessels.find(v => v.id === crewVesselId);
             const crewCompanyId = crewVessel?.company_id || profile.companyId;
             visibleVessels = crewCompanyId
                 ? vessels.filter(v => v.company_id === crewCompanyId)
@@ -123,67 +155,109 @@ export function DataProvider({ children }) {
         } else if (profile.role === 'crew_admin' && profile.companyId) {
             visibleVessels = vessels.filter(v => v.company_id === profile.companyId);
         }
-        
-        // 1. Load initial "Latest" state from DB
+
         loadHistoricalPositions(visibleVessels);
-        
-        // 2. Subscribe to new points (Realtime)
-        const channel = subscribeToTracking(visibleVessels);
-        
-        // 3. Periodic full sync as fallback (every 5 mins)
-        const interval = setInterval(() => {
-            loadHistoricalPositions(visibleVessels);
-        }, 5 * 60 * 1000);
-        
-        // 4. Recovery strategy for PC Sleep / Network reconnection
+        const channel  = subscribeToTracking(visibleVessels);
+        const interval = setInterval(() => loadHistoricalPositions(visibleVessels), 5 * 60 * 1000);
+
         const handleWakeUp = () => {
             if (document.visibilityState === 'visible' && navigator.onLine) {
-                console.log("[DataContext] Recovery trigger: refreshing AIS positions after sleep/offline");
                 loadHistoricalPositions(visibleVessels);
-                // Also trigger a refresh of other critical data
-                fetchActivities(profile?.role === 'crew' ? crewVesselId : companyVesselIds, profile?.role);
+                fetchActivities(
+                    profile?.role === 'crew' ? crewVesselId : companyVesselIds,
+                    profile?.role
+                );
                 fetchVessels();
             }
         };
 
         window.addEventListener('visibilitychange', handleWakeUp);
         window.addEventListener('online', handleWakeUp);
-        
+
         return () => {
             clearInterval(interval);
             window.removeEventListener('visibilitychange', handleWakeUp);
             window.removeEventListener('online', handleWakeUp);
             if (channel) supabase.removeChannel(channel);
         };
-    }, [vessels.length, crewVesselId, profile?.role, profile?.companyId, loadHistoricalPositions, subscribeToTracking, fetchActivities, fetchVessels, companyVesselIds]);
+    }, [vessels.length, crewVesselId, profile?.role, profile?.companyId,
+        loadHistoricalPositions, subscribeToTracking, fetchActivities, fetchVessels, companyVesselIds]);
 
-    const value = useMemo(() => ({
-        vessels, vesselPositions, geofences, activities, productionPlans,
-        standbyReasons, schedules,
-        profile, crewVesselId, companyVesselIds, lastUpdate,
-        selectedMonth, setSelectedMonth, selectedYear, setSelectedYear,
-        loading: vesselsLoading || geofencesLoading || activitiesLoading,
-        fetchVessels, addVessel, updateVessel, deleteVessel,
-        fetchGeofences, addGeofence, updateGeofence, deleteGeofence,
-        fetchActivities,
-        upsertPlan, deletePlan, fetchPlans,
-        subscribeToTracking, loadHistoricalPositions,
-        // useConfigStore explicitly named fetchReasons, but context expects fetchStandbyReasons
-        fetchStandbyReasons: fetchReasons, 
-        fetchSchedules, upsertSchedule, deleteSchedule,
-        addStandbyReason, updateStandbyReason, deleteStandbyReason,
-        approveSchedule, rejectSchedule
+    // ── Slice 1: Fleet ───────────────────────────────────────────────────────
+    const fleetValue = useMemo(() => ({
+        vessels,
+        vesselPositions,
+        crewVesselId,
+        companyVesselIds,
+        loading: vesselsLoading,
+        fetchVessels,
+        addVessel,
+        updateVessel,
+        deleteVessel,
+        loadHistoricalPositions,
+        subscribeToTracking,
     }), [
-        vessels, vesselPositions, geofences, activities, productionPlans,
-        standbyReasons, schedules, profile, crewVesselId, companyVesselIds, lastUpdate,
-        selectedMonth, setSelectedMonth, selectedYear, setSelectedYear,
-        vesselsLoading, geofencesLoading, activitiesLoading,
+        vessels, vesselPositions, crewVesselId, companyVesselIds, vesselsLoading,
         fetchVessels, addVessel, updateVessel, deleteVessel,
-        fetchGeofences, addGeofence, updateGeofence, deleteGeofence,
-        fetchActivities, upsertPlan, deletePlan, fetchPlans,
-        fetchReasons, fetchSchedules, upsertSchedule, deleteSchedule,
-        addStandbyReason, updateStandbyReason, deleteStandbyReason, approveSchedule, rejectSchedule, subscribeToTracking
+        loadHistoricalPositions, subscribeToTracking,
     ]);
 
-    return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
+    // ── Slice 2: Operations ──────────────────────────────────────────────────
+    const operationsValue = useMemo(() => ({
+        activities,
+        productionPlans,
+        geofences,
+        lastUpdate,
+        selectedMonth,
+        setSelectedMonth,
+        selectedYear,
+        setSelectedYear,
+        loading: activitiesLoading || geofencesLoading,
+        fetchActivities,
+        upsertPlan,
+        deletePlan,
+        fetchPlans,
+        fetchGeofences,
+        addGeofence,
+        updateGeofence,
+        deleteGeofence,
+    }), [
+        activities, productionPlans, geofences, lastUpdate,
+        selectedMonth, setSelectedMonth, selectedYear, setSelectedYear,
+        activitiesLoading, geofencesLoading,
+        fetchActivities, upsertPlan, deletePlan, fetchPlans,
+        fetchGeofences, addGeofence, updateGeofence, deleteGeofence,
+    ]);
+
+    // ── Slice 3: Config ──────────────────────────────────────────────────────
+    const configValue = useMemo(() => ({
+        profile,
+        standbyReasons,
+        schedules,
+        // useConfigStore espone fetchReasons, ma i consumer si aspettano fetchStandbyReasons
+        fetchStandbyReasons: fetchReasons,
+        fetchSchedules,
+        upsertSchedule,
+        deleteSchedule,
+        addStandbyReason,
+        updateStandbyReason,
+        deleteStandbyReason,
+        approveSchedule,
+        rejectSchedule,
+    }), [
+        profile, standbyReasons, schedules,
+        fetchReasons, fetchSchedules, upsertSchedule, deleteSchedule,
+        addStandbyReason, updateStandbyReason, deleteStandbyReason,
+        approveSchedule, rejectSchedule,
+    ]);
+
+    return (
+        <FleetContext.Provider value={fleetValue}>
+            <OperationsContext.Provider value={operationsValue}>
+                <ConfigContext.Provider value={configValue}>
+                    {children}
+                </ConfigContext.Provider>
+            </OperationsContext.Provider>
+        </FleetContext.Provider>
+    );
 }
