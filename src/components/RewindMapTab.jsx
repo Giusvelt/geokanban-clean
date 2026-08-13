@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { supabase } from '../lib/supabase';
+import { fetchTrackingHistory } from '../services/api/trackingService';
 import VesselMap from './VesselMap';
 import { useData } from '../context/DataContext';
 import { 
@@ -67,32 +67,7 @@ export default function RewindMapTab() {
                 throw new Error("End date must be after start date.");
             }
 
-            let allData = [];
-            let page = 0;
-            const pageSize = 1000; // DEVE essere 1000 (limite PostgREST) altrimenti interrompe la paginazione prematuramente!
-            let keepFetching = true;
-
-            while (keepFetching) {
-                const { data, error } = await supabase
-                    .from('vessel_tracking')
-                    .select('vessel_id, mmsi, lat, lon, heading, speed, status, timestamp')
-                    .gte('timestamp', start.toISOString())
-                    .lte('timestamp', end.toISOString())
-                    .order('timestamp', { ascending: true })
-                    .range(page * pageSize, (page + 1) * pageSize - 1);
-
-                if (error) throw error;
-                if (!data || data.length === 0) {
-                    keepFetching = false;
-                } else {
-                    allData = [...allData, ...data];
-                    if (data.length < pageSize) {
-                        keepFetching = false;
-                    } else {
-                        page++;
-                    }
-                }
-            }
+            const allData = await fetchTrackingHistory(start, end);
 
             if (allData.length === 0) {
                 throw new Error("No tracking data found.");

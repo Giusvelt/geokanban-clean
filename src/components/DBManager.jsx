@@ -17,6 +17,7 @@ import { companiesService } from '../services/api/companiesService';
 import { metricsService } from '../services/api/metricsService';
 import SectionHeader from './SectionHeader';
 import UserManagementTab from './UserManagementTab';
+import { parsePart, parseCoordinateLine, toDDM, formatCoords } from '../utils/geoUtils';
 
 
 const TABS = [
@@ -31,102 +32,7 @@ const TABS = [
     { id: 'health', label: 'System Health', icon: HeartPulse, color: '#ef4444' },
 ];
 
-// Helper functions for coordinate parsing & formatting
-const parsePart = (str, isLat) => {
-    if (!str) return NaN;
-    const cleanStr = str.trim();
-    
-    // Check if matches DDM pattern: e.g. 44° 07.407' N or 44 07.407 N
-    const ddmRegex = /(\d+)\s*°?\s*(\d+(?:[\.,]\d+)?)\s*'?\s*([NnSsEeWwOo])/i;
-    const match = cleanStr.match(ddmRegex);
-    if (match) {
-        const deg = parseFloat(match[1]);
-        const min = parseFloat(match[2].replace(',', '.'));
-        const hemi = match[3].toUpperCase();
-        let val = deg + (min / 60);
-        if (hemi === 'S' || hemi === 'W' || hemi === 'O') {
-            val = -val;
-        }
-        return val;
-    }
-    
-    // Check if matches simple decimal
-    const decVal = parseFloat(cleanStr.replace(',', '.'));
-    return decVal;
-};
 
-const parseCoordinateLine = (line) => {
-    let clean = line.trim();
-    if (!clean) return null;
-
-    let parts = [];
-    if (clean.includes('\t')) {
-        parts = clean.split('\t');
-    } else if (clean.includes(';')) {
-        parts = clean.split(';');
-    } else if (clean.includes(',') && (clean.match(/,/g) || []).length === 1) {
-        parts = clean.split(',');
-    } else {
-        const ddmPattern = /\d+\s*°?\s*\d+(?:[\.,]\d+)?\s*'?\s*[NnSsEeWwOo]/gi;
-        const ddmMatches = clean.match(ddmPattern);
-        if (ddmMatches && ddmMatches.length === 2) {
-            parts = ddmMatches;
-        } else {
-            const spaceParts = clean.split(/\s+/).filter(Boolean);
-            if (spaceParts.length === 2) {
-                parts = spaceParts;
-            } else if (clean.includes(',') && (clean.match(/,/g) || []).length === 3) {
-                const commaSpaceParts = clean.split(/,\s+/);
-                if (commaSpaceParts.length === 2) {
-                    parts = commaSpaceParts;
-                } else {
-                    const commaParts = clean.split(',');
-                    if (commaParts.length === 4) {
-                        parts = [
-                            commaParts[0].trim() + '.' + commaParts[1].trim(),
-                            commaParts[2].trim() + '.' + commaParts[3].trim()
-                        ];
-                    }
-                }
-            }
-        }
-    }
-
-    if (parts.length < 2) return null;
-
-    const lat = parsePart(parts[0], true);
-    const lon = parsePart(parts[1], false);
-
-    if (isNaN(lat) || isNaN(lon)) return null;
-    return [lat, lon];
-};
-
-const toDDM = (val, isLat) => {
-    if (val === undefined || val === null || isNaN(val)) return '';
-    const absVal = Math.abs(val);
-    const deg = Math.floor(absVal);
-    const min = ((absVal - deg) * 60).toFixed(4);
-    let hemi = '';
-    if (isLat) {
-        hemi = val >= 0 ? 'N' : 'S';
-    } else {
-        hemi = val >= 0 ? 'E' : 'W';
-    }
-    const degStr = String(deg);
-    const minStr = String(min);
-    return `${degStr}° ${minStr}' ${hemi}`;
-};
-
-const formatCoords = (coordsArray, format) => {
-    if (!Array.isArray(coordsArray)) return '';
-    return coordsArray.map(([lat, lon]) => {
-        if (format === 'DDM') {
-            return `${toDDM(lat, true)}, ${toDDM(lon, false)}`;
-        } else {
-            return `${lat.toFixed(8)}, ${lon.toFixed(8)}`;
-        }
-    }).join('\n');
-};
 
 export default function DBManager() {
     const {
