@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, CheckCircle, Clock, X, ShieldAlert, ShieldCheck } from 'lucide-react';
-import { useData } from '../context/DataContext';
+import { useFleet, useConfig } from '../context/DataContext';
 
 export default function TelemetryStatusIndicator() {
-    const { vesselPositions, profile, crewVesselId, companyVesselIds, vessels } = useData();
+    const { vesselPositions, crewVesselId, companyVesselIds, vessels } = useFleet();
+    const { profile } = useConfig();
     const [isOpen, setIsOpen] = useState(false);
 
     // 1. Filter positions according to tenant role permissions (SOLID)

@@ -9,7 +9,7 @@ import {
     Wifi, Layers, Lock
 } from 'lucide-react';
 import { parseGeofencesFromExcel } from '../utils/excelParser';
-import { useData } from '../context/DataContext';
+import { useFleet, useConfig } from '../context/DataContext';
 import { useActivities } from '../hooks/useActivities';
 import { useServices } from '../hooks/useServices';
 import { useHealthCheck } from '../hooks/useHealthCheck';
@@ -35,12 +35,8 @@ const TABS = [
 
 
 export default function DBManager() {
-    const {
-        vessels, geofences,
-        addVessel, updateVessel, deleteVessel,
-        addGeofence, updateGeofence, deleteGeofence,
-        standbyReasons, addStandbyReason, updateStandbyReason, deleteStandbyReason
-    } = useData();
+    const { vessels, geofences, addVessel, updateVessel, deleteVessel, addGeofence, updateGeofence, deleteGeofence } = useFleet();
+    const { standbyReasons, addStandbyReason, updateStandbyReason, deleteStandbyReason } = useConfig();
 
     const { activityTypes, addActivityType, updateActivityType, deleteActivityType } = useActivities();
     const { services, addService, updateService, deleteService } = useServices();

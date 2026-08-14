@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { X, Ship, Clock, MapPin, Activity, Check, AlertCircle } from 'lucide-react';
-import { useData } from '../context/DataContext';
+import { useFleet, useConfig } from '../context/DataContext';
 import { activityService } from '../services/api/activityService';
 import { formatTime } from '../utils/timeFormatters';
 import { HOURS, MINUTES } from '../constants/timeConstants';
@@ -10,11 +10,8 @@ const ACTIVITY_TYPES = [
 ];
 
 export default function EditActivityModal({ activityToEdit, onClose, onSaved }) {
-    const { 
-        vessels, 
-        geofences, 
-        profile
-    } = useData();
+    const { vessels, geofences } = useFleet();
+    const { profile } = useConfig();
 
     // Must be operation_admin
     const isOperationAdmin = profile?.role === 'operation_admin';

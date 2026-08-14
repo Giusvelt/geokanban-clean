@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { useData } from '../context/DataContext';
+import { useFleet, useOperations, useConfig } from '../context/DataContext';
 import { scheduleService } from '../services/api/scheduleService';
 import { Calendar, ChevronLeft, ChevronRight, AlertCircle, Clock, X, Plus, Wind } from 'lucide-react';
 import '../logbook-writer.css';
@@ -20,7 +20,9 @@ const VESSEL_COLOR_MAPPING = {
 };
 
 export default function StandbySchedule() {
-    const { profile, vessels, standbyReasons, schedules, fetchSchedules, companyVesselIds, approveSchedule, rejectSchedule, activities } = useData();
+    const { vessels, companyVesselIds } = useFleet();
+    const { activities, schedules } = useOperations();
+    const { profile, standbyReasons, fetchSchedules, approveSchedule, rejectSchedule } = useConfig();
     const perms = can(profile?.role);
 
     const visibleVessels = useMemo(() => {

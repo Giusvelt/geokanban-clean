@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import * as XLSX from 'xlsx';
-import { useData } from '../context/DataContext';
+import { useFleet, useOperations, useConfig } from '../context/DataContext';
 import { supabase } from '../lib/supabase';
 import {
     Ship, Clock, Check, RefreshCw,
@@ -22,7 +22,9 @@ const TUG_ID = 'd9a81b19-98a7-46be-bd10-07777b36eb1f';
 
 
 export default function LogbookWriterTab() {
-    const { activities, loading, fetchActivities, crewVesselId, companyVesselIds, profile, vesselPositions } = useData();
+    const { vesselPositions, crewVesselId, companyVesselIds } = useFleet();
+    const { activities, loading, fetchActivities } = useOperations();
+    const { profile } = useConfig();
 
     const perms = can(profile?.role);
 

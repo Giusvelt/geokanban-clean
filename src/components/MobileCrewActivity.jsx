@@ -3,7 +3,7 @@ import {
   Ship, MapPin, Clock, ShieldCheck, Wind, MessageSquare,
   Edit3, Save, Send, X, AlertCircle, ChevronRight, Search, Calendar, Filter, RefreshCw
 } from 'lucide-react';
-import { useData } from '../context/DataContext';
+import { useOperations } from '../context/DataContext';
 import { useUserProfile } from '../hooks/useUserProfile';
 import LogbookEntryModal from './LogbookEntryModal';
 import ActivityChatModal from './ActivityChatModal';
@@ -14,10 +14,10 @@ import { activityColor } from '../utils/activityUtils';
 
 
 export default function MobileCrewActivity({ tab = 'all' }) {
-  const { 
+  const {
     activities, loading, fetchActivities,
     selectedMonth, setSelectedMonth, selectedYear, setSelectedYear
-  } = useData();
+  } = useOperations();
   const { profile } = useUserProfile();
 
   const [searchTerm, setSearchTerm] = useState('');

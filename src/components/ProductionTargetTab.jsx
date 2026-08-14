@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { useData } from '../context/DataContext';
+import { useFleet, useOperations } from '../context/DataContext';
 import { Target, TrendingUp, Package, Edit2, Check, X, Ship, Trash2, BarChart2, RefreshCw, CalendarDays } from 'lucide-react';
 import SectionHeader from './SectionHeader';
 import complianceData from '../data/compliance_kpi_data.json';
 
 export default function ProductionTargetTab() {
-    const { 
-        vessels, productionPlans, upsertPlan, updateVessel, deleteVessel, activities,
-        selectedMonth, setSelectedMonth, selectedYear, setSelectedYear
-    } = useData();
+    const { vessels, updateVessel, deleteVessel } = useFleet();
+    const { productionPlans, upsertPlan, activities, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear } = useOperations();
 
     const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'];

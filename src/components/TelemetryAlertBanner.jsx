@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react';
 import { AlertTriangle, Clock, ArrowRight } from 'lucide-react';
-import { useData } from '../context/DataContext';
+import { useFleet, useConfig } from '../context/DataContext';
 
 export default function TelemetryAlertBanner() {
-    const { vesselPositions, profile, crewVesselId, companyVesselIds, vessels } = useData();
+    const { vesselPositions, crewVesselId, companyVesselIds, vessels } = useFleet();
+    const { profile } = useConfig();
 
     // 1. Filter positions according to tenant role permissions (SOLID)
     const activeGaps = useMemo(() => {

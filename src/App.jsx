@@ -1,6 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { DataProvider, useData } from './context/DataContext';
+import { DataProvider, useFleet, useOperations } from './context/DataContext';
 import { supabase } from './lib/supabase';
 import { useUserProfile } from './hooks/useUserProfile';
 import { useSessionLock } from './hooks/useSessionLock';
@@ -39,7 +39,8 @@ import './index.css';
 import { useUIStore } from './store/useUIStore';
 
 function ActivityDashboard({ onSignOut }) {
-  const { activities, companyVesselIds, crewVesselId, vesselPositions, geofences, schedules, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear } = useData();
+  const { companyVesselIds, crewVesselId, vesselPositions, geofences } = useFleet();
+  const { activities, schedules, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear } = useOperations();
   const { profile, updateProfile } = useUserProfile();
   const [activeTab, setActiveTab] = useState('activity');
   const [mobileTab, setMobileTab] = useState('fleet');

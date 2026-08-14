@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useData } from '../context/DataContext';
+import { useFleet, useOperations } from '../context/DataContext';
 import { Cloud, Wind, Waves, Thermometer, AlertTriangle, CheckCircle, Clock, Calendar, ShieldAlert, Anchor, ArrowUp, Navigation } from 'lucide-react';
 import { validateMooring } from '../utils/mooringSafety';
 
 export default function YardForecastsTab() {
-    const { vessels, activities, productionPlans, selectedMonth, selectedYear } = useData();
+    const { vessels } = useFleet();
+    const { activities, productionPlans, selectedMonth, selectedYear } = useOperations();
     const [forecast, setForecast] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedDwtClass, setSelectedDwtClass] = useState('7300'); // '40000', '7300', '5270'

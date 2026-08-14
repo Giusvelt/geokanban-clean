@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { X, Ship, Clock, MapPin, Activity, Check, AlertCircle, AlertTriangle } from 'lucide-react';
-import { useData } from '../context/DataContext';
+import { useFleet, useOperations, useConfig } from '../context/DataContext';
 import { activityService } from '../services/api/activityService';
 import { formatTime } from '../utils/timeFormatters';
 import { HOURS, MINUTES } from '../constants/timeConstants';
@@ -10,16 +10,9 @@ const ACTIVITY_TYPES = [
 ];
 
 export default function ManualActivityModal({ onClose, onSaved }) {
-    const { 
-        vessels, 
-        geofences, 
-        profile, 
-        crewVesselId, 
-        companyVesselIds, 
-        activities, 
-        selectedMonth, 
-        selectedYear 
-    } = useData();
+    const { vessels, geofences, crewVesselId, companyVesselIds } = useFleet();
+    const { activities, selectedMonth, selectedYear } = useOperations();
+    const { profile } = useConfig();
 
     // 1. Scope allowed vessels strictly based on tenant rules (SOLID)
     const allowedVessels = useMemo(() => {

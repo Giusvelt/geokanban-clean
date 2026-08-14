@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { AlertTriangle, Clock, ArrowRight } from 'lucide-react';
-import { useData } from '../context/DataContext';
+import { useFleet, useOperations, useConfig } from '../context/DataContext';
 import { validateMooring } from '../utils/mooringSafety';
 
 export default function MooringAlertBanner() {
-    const { activities, vessels, profile } = useData();
+    const { vessels } = useFleet();
+    const { activities } = useOperations();
+    const { profile } = useConfig();
     const [forecast, setForecast] = useState([]);
     const [loading, setLoading] = useState(true);
 

@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Anchor, X, AlertTriangle, CheckCircle, Waves, Wind, ShieldAlert } from 'lucide-react';
-import { useData } from '../context/DataContext';
+import { useFleet, useOperations } from '../context/DataContext';
 import { validateMooring } from '../utils/mooringSafety';
 
 export default function MooringStatusIndicator() {
-    const { activities, vessels } = useData();
+    const { vessels } = useFleet();
+    const { activities } = useOperations();
     const [isOpen, setIsOpen] = useState(false);
     const [forecast, setForecast] = useState([]);
     const [loading, setLoading] = useState(true);

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { useData } from '../context/DataContext';
+import { useFleet, useOperations, useConfig } from '../context/DataContext';
 import { messagesService } from '../services/api/messagesService';
 import { activityService } from '../services/api/activityService';
 import { formatDate, formatHour, formatTime, calcDuration } from '../utils/timeFormatters';
@@ -27,11 +27,9 @@ export default function VesselActivityTab({
     view = 'all',
     vesselFilter, setVesselFilter
 }) {
-    const {
-        activities, vessels, geofences, lastUpdate, loading,
-        fetchActivities, crewVesselId, companyVesselIds, profile: userProfile, productionPlans,
-        selectedMonth, setSelectedMonth, selectedYear, setSelectedYear
-    } = useData();
+    const { vessels, geofences, crewVesselId, companyVesselIds } = useFleet();
+    const { activities, lastUpdate, loading, fetchActivities, productionPlans, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear } = useOperations();
+    const { profile: userProfile } = useConfig();
     const perms = can(userProfile?.role);
 
     const [showKpiArchive, setShowKpiArchive] = useState(false);
