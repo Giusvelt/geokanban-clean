@@ -6,7 +6,7 @@ import { useUIStore } from '../store/useUIStore';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { can } from '../lib/permissions';
 import { supabase } from '../lib/supabase';
-import { useData } from '../context/DataContext';
+import { useFleet } from '../context/DataContext';
 
 // Palette colori fissa per le navi (max 12 colori, sincronizzata con StandbySchedule)
 const VESSEL_COLORS = [
@@ -121,7 +121,7 @@ export default function VesselMap({ geofences = [], vesselPositions = [], height
         };
     }, []);
 
-    const { vessels: dbVessels } = useData();
+    const { vessels: dbVessels } = useFleet();
     const [meteo, setMeteo] = useState(null);
 
     // Palette colori fissa mappata per nome nave

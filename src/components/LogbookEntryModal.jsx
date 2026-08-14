@@ -3,7 +3,7 @@ import {
     X, Ship, Clock, ShieldCheck, Lock, Anchor, Navigation,
     Package, Fuel, Users, AlertCircle, ChevronDown, ChevronUp, MessageSquare, CalendarDays
 } from 'lucide-react';
-import { useData } from '../context/DataContext';
+import { useOperations } from '../context/DataContext';
 import { useActivities } from '../hooks/useActivities';
 import ActivityChatModal from './ActivityChatModal';
 import { TimeInput } from './common/TimeInput';
@@ -16,7 +16,7 @@ import { NEEDS_SERVICES, NO_MOORING, NEEDS_CARGO, NEEDS_BUNKER, ACTIVITY_COLORS 
 
 
 export default function LogbookEntryModal({ activity, profile, entryMeta, onClose, onSaved }) {
-    const { activities } = useData();
+    const { activities } = useOperations();
     const { activityTypes } = useActivities();
 
     const isSubmitted = entryMeta?.status === 'submitted' || entryMeta?.status === 'approved';

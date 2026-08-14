@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { fetchTrackingHistory } from '../services/api/trackingService';
 import VesselMap from './VesselMap';
-import { useData } from '../context/DataContext';
+import { useFleet, useOperations } from '../context/DataContext';
 import { 
     Play, Pause, Calendar as CalendarIcon, 
     Download, AlertCircle, ArrowLeft, ArrowRight, History,
@@ -19,7 +19,8 @@ const SPEEDS = [
 ];
 
 export default function RewindMapTab() {
-    const { geofences, vessels } = useData();
+    const { vessels } = useFleet();
+    const { geofences } = useOperations();
 
     // UI selections
     const [startDate, setStartDate] = useState(() => {

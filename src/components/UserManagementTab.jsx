@@ -6,7 +6,7 @@ import {
     Eye, EyeOff, Calendar, Rewind, Target, Cloud, Box, Database, Bot
 } from 'lucide-react';
 import { userService } from '../services/api/userService';
-import { useData } from '../context/DataContext';
+import { useFleet } from '../context/DataContext';
 import { can, getRoleLabel, getRoleColor, ALL_ROLES_ORDERED } from '../lib/permissions';
 import AddUserModal from './AddUserModal';
 
@@ -48,7 +48,7 @@ function OnlineStatus({ lastSeen }) {
 }
 
 export default function UserManagementTab() {
-    const { vessels } = useData();
+    const { vessels } = useFleet();
     const [users, setUsers] = useState([]);
     const [companies, setCompanies] = useState([]);
     const [loading, setLoading] = useState(true);

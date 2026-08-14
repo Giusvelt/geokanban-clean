@@ -6,10 +6,11 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import * as XLSX from 'xlsx';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
-import { useData } from '../context/DataContext';
+import { useFleet, useConfig } from '../context/DataContext';
 
 export default function DigitalTwinCopilotTab() {
-  const { vessels, user } = useData();
+  const { vessels } = useFleet();
+  const { profile: user } = useConfig();
   const username = user?.username || user?.email || 'guest';
   const tenantId = user?.tenant_id || 'default';
 

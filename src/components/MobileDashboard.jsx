@@ -4,7 +4,7 @@ import {
   Calendar, Rewind, Users, Menu, X, LogOut, User 
 } from 'lucide-react';
 import { useUserProfile } from '../hooks/useUserProfile';
-import { useData } from '../context/DataContext';
+import { useOperations } from '../context/DataContext';
 import { can } from '../lib/permissions';
 
 export default function MobileDashboard({ 
@@ -12,7 +12,7 @@ export default function MobileDashboard({
   aisTotal, aisSubmitted
 }) {
   const { profile } = useUserProfile();
-  const { activities } = useData();
+  const { activities } = useOperations();
   
   const totalMsgs = (activities || []).reduce((sum, a) => sum + (a.msgCount || 0), 0);
 

@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { User, Phone, Mail, Ship, Save, Edit3, CheckCircle, AlertCircle, Anchor } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useUserProfile } from '../hooks/useUserProfile';
-import { useData } from '../context/DataContext';
+import { useFleet } from '../context/DataContext';
 
 export default function MobileCrewProfile() {
   const { profile, loading: profileLoading, updateProfile } = useUserProfile();
-  const { vessels, loading: dataLoading } = useData();
+  const { vessels, loading: dataLoading } = useFleet();
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
