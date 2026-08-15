@@ -199,7 +199,6 @@ export default function VesselMap({ geofences = [], vesselPositions = [], height
             zoomend: () => {
                 const zoom = map.getZoom();
                 // Se lo zoom è estremo (>18), potremmo suggerire il 3D
-                console.log("Current Zoom:", zoom);
             }
         });
         return null;

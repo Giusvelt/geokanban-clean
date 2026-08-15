@@ -68,8 +68,7 @@ export const useActivityStore = create((set, get) => ({
             let { data, error } = await query;
             
             if (error) throw error;
-            console.log(`[Store] Final count: ${data?.length || 0} activities`);
-            
+
             // Batch enrichment: Fetch tracking coordinates for Anchorage activities without a geofence
             const anchorageRows = (data || []).filter(r => r.activity_type === 'Anchorage' && !r.geofence_id);
             const anchorageCoordsMap = new Map();
@@ -139,7 +138,6 @@ export const useActivityStore = create((set, get) => ({
             const validData = (data || []).filter(row => !(row.status === 'completed' && row.duration_minutes === 0));
             const mapped = validData.map((row, idx, arr) => {
                 const showWeather = row.activity_type === 'Navigation';
-                console.log(`[useActivityStore] Mapping ${row.vessels?.name || 'Unknown'} | Type: ${row.activity_type} | showWeather: ${showWeather}`);
                 let geofenceName = row.geofences?.name || (row.activity_type === 'Anchorage' ? getAnchorageLabel(row) : '—');
 
                 if (row.activity_type === 'Navigation') {
