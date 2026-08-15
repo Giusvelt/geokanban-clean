@@ -5,7 +5,7 @@ import { Box, Maximize2, Waves, Wind, ArrowUp } from 'lucide-react';
 import { useUIStore } from '../store/useUIStore';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { can } from '../lib/permissions';
-import { supabase } from '../lib/supabase';
+import { fetchAdminCustomOverrides, subscribeToAdminProfileChanges } from '../services/api/trackingService';
 import { useFleet } from '../context/DataContext';
 
 // Palette colori fissa per le navi (max 12 colori, sincronizzata con StandbySchedule)
@@ -84,7 +84,7 @@ const getWindDirectionCardinal = (deg) => {
 
 export default function VesselMap({ geofences = [], vesselPositions = [], height = '100%', offHireVessels = {} }) {
     const { profile } = useUserProfile();
-    const perms = can(profile?.role);
+    const perms = profile?.permissions || can(profile?.role);
     const forceShowGeofences = perms.isOperationAdmin;
 
     const [showGeofences, setShowGeofences] = useState(() => localStorage.getItem('gek_show_geofences') === 'true');
@@ -95,29 +95,23 @@ export default function VesselMap({ geofences = [], vesselPositions = [], height
             setShowGeofences(localStorage.getItem('gek_show_geofences') === 'true');
         };
         window.addEventListener('geofences_visibility_changed', handleGeofencesToggled);
-        
-        // Fetch initial global state from admin profile
-        const fetchGlobalState = async () => {
-            const { data } = await supabase.from('user_profiles').select('custom_overrides').in('role', ['operation_admin', 'operation']).limit(1).single();
-            if (data && data.custom_overrides) {
-                setGlobalShowGeofences(data.custom_overrides.global_show_geofences !== false);
-            }
-        };
-        fetchGlobalState();
 
-        // Subscribe to changes on admin profiles
-        const channel = supabase.channel('global_geofences_sync')
-            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'user_profiles' }, (payload) => {
-                if (payload.new.role === 'operation_admin' || payload.new.role === 'operation') {
-                    const newOverrides = payload.new.custom_overrides || {};
-                    setGlobalShowGeofences(newOverrides.global_show_geofences !== false);
-                }
-            })
-            .subscribe();
+        // Fetch initial global geofence visibility from admin profile
+        fetchAdminCustomOverrides().then(overrides => {
+            if (overrides) setGlobalShowGeofences(overrides.global_show_geofences !== false);
+        });
+
+        // Subscribe to realtime changes on admin profiles
+        const channel = subscribeToAdminProfileChanges((payload) => {
+            if (payload.new.role === 'operation_admin' || payload.new.role === 'operation') {
+                const newOverrides = payload.new.custom_overrides || {};
+                setGlobalShowGeofences(newOverrides.global_show_geofences !== false);
+            }
+        });
 
         return () => {
             window.removeEventListener('geofences_visibility_changed', handleGeofencesToggled);
-            supabase.removeChannel(channel);
+            if (channel) channel.unsubscribe();
         };
     }, []);
 

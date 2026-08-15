@@ -30,7 +30,7 @@ export default function VesselActivityTab({
     const { vessels, geofences, crewVesselId, companyVesselIds } = useFleet();
     const { activities, lastUpdate, loading, fetchActivities, productionPlans, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear } = useOperations();
     const { profile: userProfile } = useConfig();
-    const perms = can(userProfile?.role);
+    const perms = userProfile?.permissions || can(userProfile?.role);
 
     const [showKpiArchive, setShowKpiArchive] = useState(false);
     const [showComplianceArchive, setShowComplianceArchive] = useState(false);

@@ -23,7 +23,7 @@ export default function StandbySchedule() {
     const { vessels, companyVesselIds } = useFleet();
     const { activities, schedules } = useOperations();
     const { profile, standbyReasons, fetchSchedules, approveSchedule, rejectSchedule } = useConfig();
-    const perms = can(profile?.role);
+    const perms = profile?.permissions || can(profile?.role);
 
     const visibleVessels = useMemo(() => {
         if (perms.seeAllVessels) return (vessels || []).filter(v => v.tracking_active);

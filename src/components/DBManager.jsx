@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useUserProfile } from '../hooks/useUserProfile';
-import { supabase } from '../lib/supabase';
+import { updateUserCustomOverrides, fetchTrackingPeriods, saveTrackingPeriods } from '../services/api/trackingService';
 import * as XLSX from 'xlsx';
 import {
     Ship, MapPin, Activity, Wrench, HeartPulse, Plus, Edit2, Trash2, X, Save,
@@ -86,7 +86,7 @@ export default function DBManager() {
 
         if (profile && (profile.role === 'operation_admin' || profile.role === 'operation')) {
             const updatedOverrides = { ...(profile.custom_overrides || {}), global_show_geofences: newVal };
-            await supabase.from('user_profiles').update({ custom_overrides: updatedOverrides }).eq('id', profile.id);
+            await updateUserCustomOverrides(profile.id, updatedOverrides);
         }
     };
 
@@ -96,17 +96,10 @@ export default function DBManager() {
     useEffect(() => {
         if (showModal && activeTab === 'vessels' && editingItem?.id) {
             setLoadingPeriods(true);
-            supabase
-                .from('vessel_tracking_periods')
-                .select('*')
-                .eq('vessel_id', editingItem.id)
-                .order('start_date', { ascending: true })
-                .then(({ data, error }) => {
-                    if (!error) {
-                        setTrackingPeriods(data || []);
-                    }
-                    setLoadingPeriods(false);
-                });
+            fetchTrackingPeriods(editingItem.id)
+                .then(data => setTrackingPeriods(data))
+                .catch(() => setTrackingPeriods([]))
+                .finally(() => setLoadingPeriods(false));
         } else {
             setTrackingPeriods([]);
         }
@@ -134,35 +127,8 @@ export default function DBManager() {
         setTrackingPeriods(trackingPeriods.filter(p => p.id !== id));
     };
 
-    const saveTrackingPeriods = async (vId) => {
-        const { data: dbPeriods } = await supabase
-            .from('vessel_tracking_periods')
-            .select('id')
-            .eq('vessel_id', vId);
-        
-        const dbIds = dbPeriods?.map(p => p.id) || [];
-        const currentIds = trackingPeriods.filter(p => !p.id.startsWith('temp-')).map(p => p.id);
-        
-        const deletedIds = dbIds.filter(id => !currentIds.includes(id));
-        if (deletedIds.length > 0) {
-            await supabase.from('vessel_tracking_periods').delete().in('id', deletedIds);
-        }
-        
-        const toUpsert = trackingPeriods.map(p => {
-            const row = {
-                vessel_id: vId,
-                start_date: p.start_date,
-                end_date: p.end_date
-            };
-            if (!p.id.startsWith('temp-')) {
-                row.id = p.id;
-            }
-            return row;
-        });
-        
-        if (toUpsert.length > 0) {
-            await supabase.from('vessel_tracking_periods').upsert(toUpsert);
-        }
+    const handleSaveTrackingPeriods = async (vId) => {
+        await saveTrackingPeriods(vId, trackingPeriods);
     };
 
 
@@ -298,7 +264,7 @@ export default function DBManager() {
                 case 'vessels': 
                     result = await updateVessel(editingItem.id, payload); 
                     if (result.success) {
-                        await saveTrackingPeriods(editingItem.id);
+                        await handleSaveTrackingPeriods(editingItem.id);
                     }
                     break;
                 case 'companies':
@@ -320,7 +286,7 @@ export default function DBManager() {
                 case 'vessels': 
                     result = await addVessel(payload); 
                     if (result.success && result.data?.id) {
-                        await saveTrackingPeriods(result.data.id);
+                        await handleSaveTrackingPeriods(result.data.id);
                     }
                     break;
                 case 'companies':
