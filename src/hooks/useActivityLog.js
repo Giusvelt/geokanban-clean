@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
-import { useUserProfile } from './useUserProfile';
+import { useConfig } from '../context/DataContext';
 import { weatherService } from '../services/api/weatherService';
 
 /**
@@ -10,7 +10,7 @@ import { weatherService } from '../services/api/weatherService';
  * @param {string|null} vesselId — If provided, filters for a single vessel (crew mode)
  */
 export function useActivityLog(vesselId = null) {
-    const { profile } = useUserProfile();
+    const { profile } = useConfig();
     const [activities, setActivities] = useState([]);
     const [loading, setLoading] = useState(true);
     const [lastUpdate, setLastUpdate] = useState(null);

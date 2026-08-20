@@ -3,15 +3,14 @@ import {
   Anchor, Activity, Target, Database, Edit3, 
   Calendar, Rewind, Users, Menu, X, LogOut, User 
 } from 'lucide-react';
-import { useUserProfile } from '../hooks/useUserProfile';
-import { useOperations } from '../context/DataContext';
+import { useOperations, useConfig } from '../context/DataContext';
 import { can } from '../lib/permissions';
 
 export default function MobileDashboard({ 
   onSignOut, activeTab, setActiveTab, children, navItems = [],
   aisTotal, aisSubmitted
 }) {
-  const { profile } = useUserProfile();
+  const { profile } = useConfig();
   const { activities } = useOperations();
   
   const totalMsgs = (activities || []).reduce((sum, a) => sum + (a.msgCount || 0), 0);

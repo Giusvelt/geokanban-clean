@@ -3,11 +3,10 @@ import { MapContainer, TileLayer, Polygon, Marker, Popup, useMap, useMapEvents }
 import L from 'leaflet';
 import { Box, Maximize2, Waves, Wind, ArrowUp } from 'lucide-react';
 import { useUIStore } from '../store/useUIStore';
-import { useUserProfile } from '../hooks/useUserProfile';
 import { can } from '../lib/permissions';
 import { fetchAdminCustomOverrides, subscribeToAdminProfileChanges } from '../services/api/trackingService';
 import { weatherService } from '../services/api/weatherService';
-import { useFleet } from '../context/DataContext';
+import { useFleet, useConfig } from '../context/DataContext';
 
 // Palette colori fissa per le navi (max 12 colori, sincronizzata con StandbySchedule)
 const VESSEL_COLORS = [
@@ -84,7 +83,7 @@ const getWindDirectionCardinal = (deg) => {
 };
 
 export default function VesselMap({ geofences = [], vesselPositions = [], height = '100%', offHireVessels = {} }) {
-    const { profile } = useUserProfile();
+    const { profile } = useConfig();
     const perms = profile?.permissions || can(profile?.role);
     const forceShowGeofences = perms.isOperationAdmin;
 

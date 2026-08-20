@@ -15,7 +15,7 @@ import LogbookEntryModal from './LogbookEntryModal';
 import ActivityChatModal from './ActivityChatModal';
 import ManualActivityModal from './ManualActivityModal';
 import EditActivityModal from './EditActivityModal';
-import { useUserProfile } from '../hooks/useUserProfile';
+
 import { can } from '../lib/permissions';
 import complianceData from '../data/compliance_kpi_data.json';
 

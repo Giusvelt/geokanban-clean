@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useUserProfile } from '../hooks/useUserProfile';
 import { updateUserCustomOverrides, fetchTrackingPeriods, saveTrackingPeriods } from '../services/api/trackingService';
 import * as XLSX from 'xlsx';
 import {
@@ -46,7 +45,7 @@ const TABS = [
 
 export default function DBManager() {
     const { vessels, geofences, addVessel, updateVessel, deleteVessel, addGeofence, updateGeofence, deleteGeofence } = useFleet();
-    const { standbyReasons, addStandbyReason, updateStandbyReason, deleteStandbyReason } = useConfig();
+    const { standbyReasons, addStandbyReason, updateStandbyReason, deleteStandbyReason, profile } = useConfig();
 
     const { activityTypes, addActivityType, updateActivityType, deleteActivityType } = useActivities();
     const { services, addService, updateService, deleteService } = useServices();
@@ -86,7 +85,7 @@ export default function DBManager() {
 
 
     const [showGeofencesOnMap, setShowGeofencesOnMap] = useState(() => localStorage.getItem('gek_show_geofences') === 'true');
-    const { profile } = useUserProfile();
+
 
     const toggleGeofenceVisibility = async () => {
         const newVal = !showGeofencesOnMap;
