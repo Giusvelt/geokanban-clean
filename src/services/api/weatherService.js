@@ -76,5 +76,19 @@ export const weatherService = {
             .order('timestamp', { ascending: true });
         if (error) throw error;
         return data || [];
+    },
+
+    /**
+     * Fetch the latest meteo_genova record for the VesselMap live overlay.
+     * Used by VesselMap.jsx — extracted from inline supabase call.
+     */
+    async fetchLatestMeteoOverlay() {
+        const { data } = await supabase
+            .from('meteo_genova')
+            .select('wave_height, wind_speed, raw_data')
+            .order('timestamp', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+        return data || null;
     }
 };

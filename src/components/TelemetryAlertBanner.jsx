@@ -49,7 +49,7 @@ export default function TelemetryAlertBanner() {
         });
 
         return gaps;
-    }, [vesselPositions, profile, crewVesselId, companyVesselIds]);
+    }, [vesselPositions, profile, crewVesselId, companyVesselIds, vessels]);
 
     if (!activeGaps.length) return null;
 

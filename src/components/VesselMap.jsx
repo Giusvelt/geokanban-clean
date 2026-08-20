@@ -6,6 +6,7 @@ import { useUIStore } from '../store/useUIStore';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { can } from '../lib/permissions';
 import { fetchAdminCustomOverrides, subscribeToAdminProfileChanges } from '../services/api/trackingService';
+import { weatherService } from '../services/api/weatherService';
 import { useFleet } from '../context/DataContext';
 
 // Palette colori fissa per le navi (max 12 colori, sincronizzata con StandbySchedule)
@@ -144,16 +145,8 @@ export default function VesselMap({ geofences = [], vesselPositions = [], height
     useEffect(() => {
         async function fetchLatestMeteo() {
             try {
-                const { data, error } = await supabase
-                    .from('meteo_genova')
-                    .select('wave_height, wind_speed, raw_data')
-                    .order('timestamp', { ascending: false })
-                    .limit(1)
-                    .maybeSingle();
-
-                if (!error && data) {
-                    setMeteo(data);
-                }
+                const data = await weatherService.fetchLatestMeteoOverlay();
+                if (data) setMeteo(data);
             } catch (err) {
                 console.error("Error fetching Scanno Diga live meteo overlay:", err);
             }

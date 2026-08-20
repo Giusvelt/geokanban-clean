@@ -84,8 +84,14 @@ export default function StandbySchedule() {
     // Helpers for calendar
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Stabile: ricalcolato solo al cambio del giorno (useMemo con deps [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const todayMs = useMemo(() => {
+        const d = new Date();
+        d.setHours(0, 0, 0, 0);
+        return d.getTime();
+    }, []);
+    const today = new Date(todayMs); // oggetto Date per le funzioni che lo richiedono
 
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -96,15 +102,14 @@ export default function StandbySchedule() {
     // For Admin: Calculate upcoming 7 days standbys for Sidebar
     const upcomingStandbys = useMemo(() => {
         if (perms.seeOwnVesselOnly) return [];
-        const next7Days = new Date(today);
-        next7Days.setDate(today.getDate() + 7);
+        const next7Days = new Date(todayMs + 7 * 24 * 60 * 60 * 1000);
 
         return (schedules || []).filter(s => {
             if (!perms.seeAllVessels && companyVesselIds && !companyVesselIds.includes(s.vessel_id)) return false;
             const d = new Date(s.standby_date);
             return d >= today && d <= next7Days;
         }).sort((a, b) => new Date(a.standby_date) - new Date(b.standby_date));
-    }, [schedules, perms, today, companyVesselIds]);
+    }, [schedules, perms, todayMs, companyVesselIds]);
 
     // For Admin: Calculate daily standbys across fleet for selected date
     const dailyStandbys = useMemo(() => {

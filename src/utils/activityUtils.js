@@ -21,3 +21,24 @@ export const activityColor = (activity) => {
     };
     return map[activity] || '#94a3b8';
 };
+
+/**
+ * Filtra le attività di una singola nave dall'array globale.
+ * Supporta il match sia per vesselId (UUID) che per vessel (nome stringa) — backward-compat.
+ * @param {Array} activities — array globale attività
+ * @param {Object} vessel — oggetto nave { id, name }
+ * @returns {Array}
+ */
+export const getVesselActivities = (activities, vessel) =>
+    (activities || []).filter(
+        a => a.vesselId === vessel.id || a.vessel === vessel.name
+    );
+
+/**
+ * Conta le attività di un tipo specifico in un array già filtrato per nave.
+ * @param {Array} vesselActivities — output di getVesselActivities
+ * @param {string} type — es. 'Loading', 'Unloading', 'Navigation'
+ * @returns {number}
+ */
+export const countActivitiesByType = (vesselActivities, type) =>
+    (vesselActivities || []).filter(a => a.activity === type).length;

@@ -6,7 +6,7 @@ import {
     Ship, MapPin, Activity, Wrench, HeartPulse, Plus, Edit2, Trash2, X, Save,
     Search, CheckCircle, AlertTriangle, XCircle, RefreshCw, FileDown, Upload,
     Building2, Globe, Mail, Phone, Map, Briefcase, FileText, Hash, Info, Anchor, Users,
-    Wifi, Layers, Lock
+    Wifi, Layers, Lock, Box
 } from 'lucide-react';
 import { parseGeofencesFromExcel } from '../utils/excelParser';
 import { useFleet, useConfig } from '../context/DataContext';

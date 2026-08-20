@@ -180,7 +180,7 @@ export function DataProvider({ children }) {
             window.removeEventListener('online', handleWakeUp);
             if (channel) supabase.removeChannel(channel);
         };
-    }, [vessels.length, crewVesselId, profile?.role, profile?.companyId,
+    }, [vessels, crewVesselId, profile?.role, profile?.companyId,
         loadHistoricalPositions, subscribeToTracking, fetchActivities, fetchVessels, companyVesselIds]);
 
     // ── Slice 1: Fleet ───────────────────────────────────────────────────────

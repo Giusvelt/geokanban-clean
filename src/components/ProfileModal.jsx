@@ -3,14 +3,14 @@ import { User, LogOut, X, Ship, Activity, Mail, Edit2, Check, Building, Phone, S
 import '../logbook-writer.css';
 
 export default function ProfileModal({ profile, onClose, onSignOut, updateProfile }) {
-    if (!profile) return null;
-
     const [isEditing, setIsEditing] = useState(false);
-    const [editedName, setEditedName] = useState(profile.displayName || '');
-    const [editedCompany, setEditedCompany] = useState(profile.companyName || '');
-    const [editedPhone, setEditedPhone] = useState(profile.phoneNumber || '');
-    const [editedSignatureTitle, setEditedSignatureTitle] = useState(profile.signatureTitle || '');
+    const [editedName, setEditedName] = useState(profile?.displayName || '');
+    const [editedCompany, setEditedCompany] = useState(profile?.companyName || '');
+    const [editedPhone, setEditedPhone] = useState(profile?.phoneNumber || '');
+    const [editedSignatureTitle, setEditedSignatureTitle] = useState(profile?.signatureTitle || '');
     const [saving, setSaving] = useState(false);
+
+    if (!profile) return null;
 
     // Get an initial for the avatar
     const initial = (profile.displayName || profile.email || '?').charAt(0).toUpperCase();

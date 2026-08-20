@@ -51,7 +51,7 @@ export default function TelemetryStatusIndicator() {
         });
 
         return gaps;
-    }, [vesselPositions, profile, crewVesselId, companyVesselIds]);
+    }, [vesselPositions, profile, crewVesselId, companyVesselIds, vessels]);
 
     const isHealthy = activeGaps.length === 0;
 
