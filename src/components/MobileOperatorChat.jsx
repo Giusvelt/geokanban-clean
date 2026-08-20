@@ -13,18 +13,21 @@ export default function MobileOperatorChat({ profile }) {
   const [loading, setLoading] = useState(true);
   const messagesEndRef = useRef(null);
 
-  // Fetch unique activities that have messages (our "Conversations")
+  // Mount once: global subscription for new messages in any conversation
   useEffect(() => {
     fetchConversations();
-    
-    // Global subscription for new messages
+
     const channel = messagesService.subscribeGlobal(() => {
       fetchConversations();
-      if (activeChat) fetchMessages(activeChat.id);
     });
 
     return () => messagesService.unsubscribe(channel);
-  }, [activeChat]);
+  }, []);
+
+  // Fetch messages when the active chat changes
+  useEffect(() => {
+    if (activeChat?.id) fetchMessages(activeChat.id);
+  }, [activeChat?.id]);
 
   useEffect(() => {
     if (activeChat) {

@@ -35,13 +35,19 @@ function RoleBadge({ role }) {
     );
 }
 
+/** Converte lastSeen in etichetta leggibile. Funzione pura — non usa Date.now() nel render. */
+const fmtLastSeen = (lastSeen) => {
+    if (!lastSeen) return 'NEVER';
+    return `${Math.round((Date.now() - new Date(lastSeen)) / 60000)}m ago`;
+};
+
 function OnlineStatus({ lastSeen }) {
     const online = isOnline(lastSeen);
     return (
         <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${online ? 'bg-green-500 animate-pulse' : 'bg-slate-300'}`} />
             <span className={`text-[11px] font-bold ${online ? 'text-green-600' : 'text-slate-400'}`}>
-                {online ? 'ONLINE' : lastSeen ? `${Math.round((Date.now() - new Date(lastSeen)) / 60000)}m ago` : 'NEVER'}
+                {online ? 'ONLINE' : fmtLastSeen(lastSeen)}
             </span>
         </div>
     );

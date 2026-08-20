@@ -3,6 +3,7 @@ import { useFleet, useOperations } from '../context/DataContext';
 import { Target, TrendingUp, Package, Edit2, Check, X, Ship, Trash2, BarChart2, RefreshCw, CalendarDays } from 'lucide-react';
 import SectionHeader from './SectionHeader';
 import complianceData from '../data/compliance_kpi_data.json';
+import { getVesselActivities, countActivitiesByType } from '../utils/activityUtils';
 
 export default function ProductionTargetTab() {
     const { vessels, updateVessel, deleteVessel } = useFleet();
@@ -27,8 +28,8 @@ export default function ProductionTargetTab() {
 
     // Calcolo dinamico reale tonnellaggio: SOMMA (vessel.avg_cargo * loading_count per ogni nave)
     const calculatedDelivered = (vessels || []).reduce((sum, v) => {
-        const vActivities = (activities || []).filter(a => a.vesselId === v.id || a.vessel === v.name);
-        const loadingCount = vActivities.filter(a => a.activity === 'Loading').length;
+        const vActs = getVesselActivities(activities, v);
+        const loadingCount = countActivitiesByType(vActs, 'Loading');
         const cargo = v.avg_cargo || 0;
         return sum + (cargo * loadingCount);
     }, 0);
@@ -375,9 +376,9 @@ export default function ProductionTargetTab() {
                             </thead>
                             <tbody className="divide-y divide-surface-low/50">
                                 {(vessels || []).map((v, i) => {
-                                    const vActivities = (activities || []).filter(a => a.vesselId === v.id || a.vessel === v.name);
-                                    const loadingCount = vActivities.filter(a => a.activity === 'Loading').length;
-                                    const unloadingCount = vActivities.filter(a => a.activity === 'Unloading').length;
+                                    const vActs = getVesselActivities(activities, v);
+                                    const loadingCount = countActivitiesByType(vActs, 'Loading');
+                                    const unloadingCount = countActivitiesByType(vActs, 'Unloading');
                                     const cargo = v.avg_cargo || 0;
                                     const calculatedProduction = cargo * loadingCount;
 

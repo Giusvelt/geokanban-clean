@@ -3,7 +3,7 @@ import { useFleet, useOperations, useConfig } from '../context/DataContext';
 import { messagesService } from '../services/api/messagesService';
 import { activityService } from '../services/api/activityService';
 import { formatDate, formatHour, formatTime, calcDuration } from '../utils/timeFormatters';
-import { activityColor } from '../utils/activityUtils';
+import { activityColor, getVesselActivities, countActivitiesByType } from '../utils/activityUtils';
 import { exportActivitiesToExcel } from '../utils/excelExporter';
 import {
     Ship, MapPin, Clock, Filter, RefreshCw, Anchor, Navigation,
@@ -155,8 +155,8 @@ export default function VesselActivityTab({
         // Calcolo reale dinamico: SOMMA (vessel.avg_cargo * loading_count) per ogni nave
         let calculatedDelivered = 0;
         (vessels || []).forEach(v => {
-            const vActivities = (activities || []).filter(a => a.vesselId === v.id || a.vessel === v.name);
-            const loadingCount = vActivities.filter(a => a.activity === 'Loading').length;
+            const vActs = getVesselActivities(activities, v);
+            const loadingCount = countActivitiesByType(vActs, 'Loading');
             const cargo = v.avg_cargo || 0;
             calculatedDelivered += (cargo * loadingCount);
         });
