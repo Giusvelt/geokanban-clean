@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useFleet, useOperations, useConfig } from '../context/DataContext';
 import { messagesService } from '../services/api/messagesService';
 import { activityService } from '../services/api/activityService';
@@ -16,6 +16,7 @@ import ActivityChatModal from './ActivityChatModal';
 import ManualActivityModal from './ManualActivityModal';
 import EditActivityModal from './EditActivityModal';
 import { can } from '../lib/permissions';
+import ActivityKPIArchive from './vesselactivity/ActivityKPIArchive';
 
 
 export default function VesselActivityTab({ 
@@ -108,69 +109,6 @@ export default function VesselActivityTab({
         return { filtered: base };
     }, [activitiesInPeriod, vesselFilter, search]);
 
-    const kpiByMonth = useMemo(() => {
-        const groups = {};
-        
-        // Group data exclusively from productionPlans (Source of Truth)
-        (productionPlans || []).forEach(p => {
-            if (!p.period_name) return;
-            
-            const [mName, yStr] = p.period_name.split(' ');
-            const mIdx = MONTHS.indexOf(mName);
-            if (mIdx === -1) return;
-            
-            const year = Number(yStr);
-            const key = `${year}-${mIdx}`;
-            
-            if (!groups[key]) {
-                groups[key] = { month: mIdx, year, loading: 0, navigation: 0, unloading: 0, deliveredTons: 0, goalTons: 0 };
-            }
-
-            if (p.vessel_id === null) {
-                // Global goal
-                groups[key].goalTons = p.target_quantity || 0;
-            } else {
-                // Aggregate vessel actuals
-                groups[key].unloading += (p.actual_trips || 0);
-                groups[key].deliveredTons += (p.actual_quantity || 0);
-                groups[key].loading += (p.loading_count || 0);
-                groups[key].navigation += (p.navigation_count || 0);
-            }
-        });
-        
-        return Object.values(groups).sort((a,b) => b.year - a.year || b.month - a.month);
-    }, [productionPlans]);
-
-    const stats = useMemo(() => {
-        const current = kpiByMonth.find(k => k.month === selectedMonth && k.year === selectedYear) || {
-            loading: 0, navigation: 0, unloading: 0, deliveredTons: 0, goalTons: 0
-        };
-        // Calcolo reale dinamico: SOMMA (vessel.avg_cargo * loading_count) per ogni nave
-        let calculatedDelivered = 0;
-        (vessels || []).forEach(v => {
-            const vActs = getVesselActivities(activities, v);
-            const loadingCount = countActivitiesByType(vActs, 'Loading');
-            const cargo = v.avg_cargo || 0;
-            calculatedDelivered += (cargo * loadingCount);
-        });
-
-        const totalTarget = current.goalTons || 300000;
-        const deliveredTotal = calculatedDelivered > 0 ? calculatedDelivered : (current.deliveredTons || 0);
-        const remainingTotal = Math.max(0, totalTarget - deliveredTotal);
-        const progressPct = totalTarget > 0 ? Math.round((deliveredTotal / totalTarget) * 100) : 0;
-
-        return {
-            loading: current.loading,
-            navigation: current.navigation,
-            unloading: current.unloading,
-            totalAis: aisStats.total,
-            submittedAis: aisStats.submitted,
-            deliveredTons: deliveredTotal,
-            goalTons: totalTarget,
-            remainingTons: remainingTotal,
-            progress: progressPct
-        };
-    }, [kpiByMonth, selectedMonth, selectedYear, aisStats, vessels, activities]);
 
     const handleCloseMonth = async () => {
         if (!confirm('Close current month and generate Certified SAL?')) return;
@@ -186,7 +124,7 @@ export default function VesselActivityTab({
     const handleDeleteActivity = async (activity) => {
         const isSubmitted = ['submitted', 'approved'].includes(activity.logbookStatus);
         const warningMsg = isSubmitted 
-            ? `⚠️ WARNING: This activity is already SUBMITTED or APPROVED.\nDeleting it will affect Certified SAL totals.\n\nAre you sure you want to delete this activity?`
+            ? `âš ï¸ WARNING: This activity is already SUBMITTED or APPROVED.\nDeleting it will affect Certified SAL totals.\n\nAre you sure you want to delete this activity?`
             : `Are you sure you want to delete this activity? This will also delete any associated chat messages or logbook entries.`;
 
         if (!confirm(warningMsg)) return;
@@ -224,61 +162,7 @@ export default function VesselActivityTab({
             {perms.adminDashboard && (view === 'all' || view === 'to-submit') && (
                 <>
                     {/* PRODUCTION KPI ROW */}
-                    <div className="production-stats-grid">
-                        {[
-                            { label: 'Monthly Goal', value: stats.goalTons.toLocaleString(), unit: 'tons', icon: Target, color: 'text-primary', bg: 'bg-primary/10', border: 'border-b-primary shadow-sm' },
-                            { label: 'Delivered (Est.)', value: stats.deliveredTons.toLocaleString(), unit: 't', icon: TrendingUp, color: 'text-green-600', bg: 'bg-green-50' },
-                            { label: 'Remaining', value: stats.remainingTons.toLocaleString(), unit: 't', icon: Package, color: 'text-amber-600', bg: 'bg-amber-50' },
-                            { label: 'Overall Progress', progress: stats.progress, icon: BarChart2, color: 'text-primary', bg: 'bg-primary/5' },
-                        ].map((stat, i) => (
-                            <div key={i} className={`bg-white rounded-2xl p-5 border border-surface-low ${stat.border || ''} flex items-center gap-4`}>
-                                {stat.progress !== undefined ? (
-                                    <>
-                                        <div className="w-12 h-12 rounded-full border-4 border-primary/20 flex items-center justify-center">
-                                            <div className="text-sm font-black text-primary">{stat.progress}%</div>
-                                        </div>
-                                        <div className="flex-1">
-                                            <p className="text-[10px] font-black text-on-surface/40 uppercase tracking-widest mb-2">{stat.label}</p>
-                                            <div className="h-1.5 w-full bg-surface-low rounded-full overflow-hidden">
-                                                <div className="h-full bg-primary" style={{ width: `${stat.progress}%` }} />
-                                            </div>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <>
-                                        <div className={`w-12 h-12 rounded-full ${stat.bg} flex items-center justify-center ${stat.color}`}>
-                                            <stat.icon size={24} />
-                                        </div>
-                                        <div className="flex-1">
-                                             <p className="text-[10px] font-black text-on-surface/40 uppercase tracking-widest mb-1">{stat.label}</p>
-                                             <div className="flex items-end gap-1">
-                                                 <h3 className={`text-2xl font-manrope font-extrabold ${stat.color} leading-none`}>{stat.value}</h3>
-                                                 <span className={`text-xs font-bold ${stat.color}/60 mb-0.5`}>{stat.unit}</span>
-                                             </div>
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* COMPACT OPERATIONAL STATS ROW — PHASE 28 */}
-                    <div className="stats-row-compact">
-                        {[
-                            { label: 'Loading', value: stats.loading, color: 'text-green-500' },
-                            { label: 'Navigation', value: stats.navigation, color: 'text-blue-500' },
-                            { label: 'Unloading', value: stats.unloading, color: 'text-amber-500' },
-                            { label: 'Tracked Vessels', value: (vessels || []).filter(v => v.tracking_active).length, color: 'text-purple-500' },
-                        ].map((stat, i) => (
-                            <div key={i} className="stat-card-compact group">
-                                <span className="stat-label">{stat.label}</span>
-                                <span className={`stat-value ${stat.color}`}>{stat.value}</span>
-                            </div>
-                        ))}
-                    </div>
-
-
-
+                    <ActivityKPIArchive productionPlans={productionPlans} selectedMonth={selectedMonth} selectedYear={selectedYear} aisStats={aisStats} vessels={vessels} activities={activities} />
 
                 </>
             )}
@@ -302,7 +186,7 @@ export default function VesselActivityTab({
                                     <div className="w-px h-4 bg-surface-low/30" />
                                     <select value={vesselFilter} onChange={e => setVesselFilter(e.target.value)} className="bg-transparent pl-2 pr-4 py-2 text-[9px] font-black uppercase text-on-surface outline-none cursor-pointer hover:bg-surface-low/10 transition-colors">
                                         <option value="All">All Vessels</option>
-                                        <option value="IN_PROGRESS" style={{ fontWeight: 'bold', color: '#0284c7' }}>⚡ IN PROGRESS ACTIVITIES ONLY</option>
+                                        <option value="IN_PROGRESS" style={{ fontWeight: 'bold', color: '#0284c7' }}>âš¡ IN PROGRESS ACTIVITIES ONLY</option>
                                         {perms.adminDashboard ? (
                                             (vessels || [])
                                                 .filter(v => v.tracking_active)
@@ -409,7 +293,7 @@ export default function VesselActivityTab({
                                                     {a.activity}
                                                 </span>
                                                 {a.overlappingStandbys && a.overlappingStandbys.length > 0 && (
-                                                    <div className="flex items-center gap-1" title={`${a.overlappingStandbys.length} Stand-by meteo in cantiere durante questa attività`}>
+                                                    <div className="flex items-center gap-1" title={`${a.overlappingStandbys.length} Stand-by meteo in cantiere durante questa attivitÃ `}>
                                                         {a.overlappingStandbys.map((_, idx) => (
                                                             <div key={idx} className="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-sm border border-purple-200" />
                                                         ))}
@@ -431,23 +315,23 @@ export default function VesselActivityTab({
                                                         {formatTime(a.startTime)} <br/> {a.endTime ? formatTime(a.endTime) : '...'}
                                                     </td>
                                                     <td className="px-4 py-3 bg-white text-[10px] font-bold text-on-surface/80">
-                                                        {sf.arrival_pilot_in ? formatTime(sf.arrival_pilot_in).split(' ')[1] : '—'} <br/>
-                                                        {sf.arrival_pilot_out ? formatTime(sf.arrival_pilot_out).split(' ')[1] : '—'}
+                                                        {sf.arrival_pilot_in ? formatTime(sf.arrival_pilot_in).split(' ')[1] : 'â€”'} <br/>
+                                                        {sf.arrival_pilot_out ? formatTime(sf.arrival_pilot_out).split(' ')[1] : 'â€”'}
                                                     </td>
                                                     <td className="px-4 py-3 bg-white text-[10px] font-bold text-on-surface/80">
-                                                        {sf.arrival_mooring_in ? formatTime(sf.arrival_mooring_in).split(' ')[1] : '—'} <br/>
-                                                        {sf.arrival_mooring_out ? formatTime(sf.arrival_mooring_out).split(' ')[1] : '—'}
+                                                        {sf.arrival_mooring_in ? formatTime(sf.arrival_mooring_in).split(' ')[1] : 'â€”'} <br/>
+                                                        {sf.arrival_mooring_out ? formatTime(sf.arrival_mooring_out).split(' ')[1] : 'â€”'}
                                                     </td>
                                                     <td className="px-4 py-3 bg-white text-[10px] font-bold text-on-surface/80">
-                                                        {sf.arrival_tug_count || 0} U {sf.arrival_tug_in ? formatTime(sf.arrival_tug_in).split(' ')[1] : '—'} {'>'} {sf.arrival_tug_out ? formatTime(sf.arrival_tug_out).split(' ')[1] : '—'}
+                                                        {sf.arrival_tug_count || 0} U {sf.arrival_tug_in ? formatTime(sf.arrival_tug_in).split(' ')[1] : 'â€”'} {'>'} {sf.arrival_tug_out ? formatTime(sf.arrival_tug_out).split(' ')[1] : 'â€”'}
                                                     </td>
                                                     <td className="px-4 py-3 bg-white text-[10px] font-medium text-on-surface/50 italic truncate max-w-[130px]" title={entry.narrative_text || ''}>
-                                                        {entry.narrative_text || '—'}
+                                                        {entry.narrative_text || 'â€”'}
                                                     </td>
                                                     <td className="px-4 py-3 bg-white text-[10px] font-black text-primary whitespace-nowrap">
                                                         {entry.submitted_by_name?.includes('GeoKanban AI') || entry.submitted_by_name?.includes('AI Auto-Pilot') 
-                                                            ? '🤖 GeoKanban AI' 
-                                                            : (entry.submitted_by_name || '—')}
+                                                            ? 'ðŸ¤– GeoKanban AI' 
+                                                            : (entry.submitted_by_name || 'â€”')}
                                                     </td>
                                                     <td className="px-4 py-3 bg-white text-[10px] font-black text-primary/60 font-mono tracking-tight">
                                                         {entry.document_hash ? entry.document_hash.substring(0, 16).toUpperCase() + '...' : 'PENDING'}
@@ -508,16 +392,16 @@ export default function VesselActivityTab({
                                                         {a.endTime ? formatTime(a.endTime) : <span className="text-primary italic animate-pulse">In Progress...</span>}
                                                     </td>
                                                     <td className="px-4 py-3 bg-white text-[10px] font-extrabold text-sky-700 bg-sky-50/50 whitespace-nowrap text-center">
-                                                        {a.aisStartDraught || '—'} / {a.aisEndDraught || '—'}
+                                                        {a.aisStartDraught || 'â€”'} / {a.aisEndDraught || 'â€”'}
                                                     </td>
-                                                    <td className="px-4 py-3 bg-white text-[9px] font-black text-on-surface/20 uppercase whitespace-nowrap">{calcDuration(a.startTime, a.endTime) || '—'}</td>
+                                                    <td className="px-4 py-3 bg-white text-[9px] font-black text-on-surface/20 uppercase whitespace-nowrap">{calcDuration(a.startTime, a.endTime) || 'â€”'}</td>
                                                     <td className="px-4 py-3 bg-white whitespace-nowrap">
                                                         <div className={`flex flex-col gap-0.5 text-[9px] uppercase ${a.probable_weather_standby ? 'font-extrabold text-red-500' : 'font-black text-on-surface/40'}`}>
                                                             <div className="flex items-center gap-1">
-                                                                <Wind size={10} className={a.probable_weather_standby ? 'text-red-500' : 'text-blue-400'} /> {a.weatherWind || '—'}
+                                                                <Wind size={10} className={a.probable_weather_standby ? 'text-red-500' : 'text-blue-400'} /> {a.weatherWind || 'â€”'}
                                                             </div>
                                                             <div className="flex items-center gap-1">
-                                                                <TrendingUp size={10} className={a.probable_weather_standby ? 'text-red-500' : 'text-cyan-400'} /> {a.weatherWave || '—'}
+                                                                <TrendingUp size={10} className={a.probable_weather_standby ? 'text-red-500' : 'text-cyan-400'} /> {a.weatherWave || 'â€”'}
                                                                 {a.probable_weather_standby && <AlertTriangle size={10} className="ml-1 animate-pulse text-red-500" title="Possibile Weather Stand-by (Onde > 1m)" />}
                                                             </div>
                                                         </div>
@@ -592,7 +476,7 @@ export default function VesselActivityTab({
                                                             {hoverData.messages.map((m, idx) => (
                                                                 <div key={idx} className="flex items-start gap-2 text-[10px] font-bold leading-tight">
                                                                     <span className="flex-shrink-0 opacity-50 mt-0.5">
-                                                                        {m.sender_role === 'crew' ? '📤' : '📥'}
+                                                                        {m.sender_role === 'crew' ? 'ðŸ“¤' : 'ðŸ“¥'}
                                                                     </span>
                                                                     <p className="text-left line-clamp-2 italic">{m.message_text}</p>
                                                                 </div>
