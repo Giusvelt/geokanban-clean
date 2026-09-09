@@ -1,0 +1,402 @@
+{
+  "App.jsx": {
+    "mtime": 1786722272.3739755,
+    "ast_hash": "e69cdc66b7468ff85707572b0681f5eb",
+    "semantic_hash": "e69cdc66b7468ff85707572b0681f5eb"
+  },
+  "components/ActivityChatModal.jsx": {
+    "mtime": 1780122657.9471788,
+    "ast_hash": "14a8c3f7bd95dbefb0308956a1fa6595",
+    "semantic_hash": "14a8c3f7bd95dbefb0308956a1fa6595"
+  },
+  "components/AddUserModal.jsx": {
+    "mtime": 1784736465.5014238,
+    "ast_hash": "970ba06787051c5c2cafc02d1ab50b5f",
+    "semantic_hash": "970ba06787051c5c2cafc02d1ab50b5f"
+  },
+  "components/DBManager.jsx": {
+    "mtime": 1787262145.047218,
+    "ast_hash": "966cbbbf610ce331fb8f51375d491c2e",
+    "semantic_hash": "966cbbbf610ce331fb8f51375d491c2e"
+  },
+  "components/DigitalTwinCopilotTab.jsx": {
+    "mtime": 1786721529.582525,
+    "ast_hash": "f48ef1a2a239de84f6356da04901ccc7",
+    "semantic_hash": "f48ef1a2a239de84f6356da04901ccc7"
+  },
+  "components/EditActivityModal.jsx": {
+    "mtime": 1786722015.113027,
+    "ast_hash": "8038547d38b2a73bc468cddc483b58a0",
+    "semantic_hash": "8038547d38b2a73bc468cddc483b58a0"
+  },
+  "components/ErrorBoundary.jsx": {
+    "mtime": 1776282437.3068419,
+    "ast_hash": "0d6c5c91ea8ad558535619b5aee5f023",
+    "semantic_hash": "0d6c5c91ea8ad558535619b5aee5f023"
+  },
+  "components/LandingPage.jsx": {
+    "mtime": 1785684995.9363713,
+    "ast_hash": "7acf7486a68b81522103515fc49b1f9c",
+    "semantic_hash": "7acf7486a68b81522103515fc49b1f9c"
+  },
+  "components/LogbookEntryModal.jsx": {
+    "mtime": 1786721509.6177967,
+    "ast_hash": "88d7128365fc44cfbdf015ea00998940",
+    "semantic_hash": "88d7128365fc44cfbdf015ea00998940"
+  },
+  "components/LogbookModal.jsx": {
+    "mtime": 1786460785.5344331,
+    "ast_hash": "2a4a1e1fd89627b86faede07a59f2ae8",
+    "semantic_hash": "2a4a1e1fd89627b86faede07a59f2ae8"
+  },
+  "components/LogbookWriterTab.jsx": {
+    "mtime": 1786830372.1810195,
+    "ast_hash": "24de372c80f688091de9c92e23f7c4f0",
+    "semantic_hash": "24de372c80f688091de9c92e23f7c4f0"
+  },
+  "components/Login.jsx": {
+    "mtime": 1784736465.5089526,
+    "ast_hash": "da09a58b3059f89c46ec4cc1ce151969",
+    "semantic_hash": "da09a58b3059f89c46ec4cc1ce151969"
+  },
+  "components/MFAEnrollModal.jsx": {
+    "mtime": 1776838311.0583968,
+    "ast_hash": "bdd29791cf2c93704803584eab1d8798",
+    "semantic_hash": "bdd29791cf2c93704803584eab1d8798"
+  },
+  "components/MFAVerifyStep.jsx": {
+    "mtime": 1776759720.8988295,
+    "ast_hash": "f96c008c373883445d92900d35a87659",
+    "semantic_hash": "f96c008c373883445d92900d35a87659"
+  },
+  "components/ManualActivityModal.jsx": {
+    "mtime": 1786722198.936538,
+    "ast_hash": "cee23c2439ed64850af7100a3fee0831",
+    "semantic_hash": "cee23c2439ed64850af7100a3fee0831"
+  },
+  "components/MobileCrewActivity.jsx": {
+    "mtime": 1787262201.2477353,
+    "ast_hash": "735311625e002f321c6f9fd073dbd45c",
+    "semantic_hash": "735311625e002f321c6f9fd073dbd45c"
+  },
+  "components/MobileCrewNews.jsx": {
+    "mtime": 1776759720.9022148,
+    "ast_hash": "45734816fc3670d5e96e6c579c9eda15",
+    "semantic_hash": "45734816fc3670d5e96e6c579c9eda15"
+  },
+  "components/MobileCrewProfile.jsx": {
+    "mtime": 1786721513.659361,
+    "ast_hash": "04e4df360bb7c22bd398ef5f8d858710",
+    "semantic_hash": "04e4df360bb7c22bd398ef5f8d858710"
+  },
+  "components/MobileDashboard.jsx": {
+    "mtime": 1787262219.3957713,
+    "ast_hash": "c1873fd5362ec58a94ed17a52f231bd4",
+    "semantic_hash": "c1873fd5362ec58a94ed17a52f231bd4"
+  },
+  "components/MobileOperatorChat.jsx": {
+    "mtime": 1787230896.0093422,
+    "ast_hash": "f4b498421bf900ff790439f2231cef5f",
+    "semantic_hash": "f4b498421bf900ff790439f2231cef5f"
+  },
+  "components/MooringAlertBanner.jsx": {
+    "mtime": 1786721942.558407,
+    "ast_hash": "2e4d44fd2949db171f310c3892421bb5",
+    "semantic_hash": "2e4d44fd2949db171f310c3892421bb5"
+  },
+  "components/MooringStatusIndicator.jsx": {
+    "mtime": 1786721935.0468688,
+    "ast_hash": "94a1c16336e63a7af12ae1e2d6efe8c8",
+    "semantic_hash": "94a1c16336e63a7af12ae1e2d6efe8c8"
+  },
+  "components/ProductionTargetTab.jsx": {
+    "mtime": 1787231611.374642,
+    "ast_hash": "71ceaefdef7ebfe2d463bc85a51de23d",
+    "semantic_hash": "71ceaefdef7ebfe2d463bc85a51de23d"
+  },
+  "components/ProfileModal.jsx": {
+    "mtime": 1787230351.2896056,
+    "ast_hash": "a1bfdf806635250edae49f9bfb98921e",
+    "semantic_hash": "a1bfdf806635250edae49f9bfb98921e"
+  },
+  "components/ProjectRegistryTab.jsx": {
+    "mtime": 1776838355.9981985,
+    "ast_hash": "8fe95ee11da15a3be4b55195d88e247e",
+    "semantic_hash": "8fe95ee11da15a3be4b55195d88e247e"
+  },
+  "components/RewindMapTab.jsx": {
+    "mtime": 1786721528.0414004,
+    "ast_hash": "f65dcf97d8bb46a5ce28bf9b5260a41a",
+    "semantic_hash": "f65dcf97d8bb46a5ce28bf9b5260a41a"
+  },
+  "components/SectionHeader.jsx": {
+    "mtime": 1776759720.9182105,
+    "ast_hash": "dc12dc3e377eb681be7a0ed3ef986091",
+    "semantic_hash": "dc12dc3e377eb681be7a0ed3ef986091"
+  },
+  "components/StandbySchedule.jsx": {
+    "mtime": 1787230484.1293287,
+    "ast_hash": "2911d3764757f2e23d02164f423aef45",
+    "semantic_hash": "2911d3764757f2e23d02164f423aef45"
+  },
+  "components/TabLoadingSkeleton.jsx": {
+    "mtime": 1776759720.9238577,
+    "ast_hash": "2c054822e6b14bf8322498b6d14d863d",
+    "semantic_hash": "2c054822e6b14bf8322498b6d14d863d"
+  },
+  "components/TelemetryAlertBanner.jsx": {
+    "mtime": 1787230443.040539,
+    "ast_hash": "d298217fc5e5538943a187b9dfb46350",
+    "semantic_hash": "d298217fc5e5538943a187b9dfb46350"
+  },
+  "components/TelemetryStatusIndicator.jsx": {
+    "mtime": 1787230464.761178,
+    "ast_hash": "b1fdd49119e75f3c14c92445ad6c50f0",
+    "semantic_hash": "b1fdd49119e75f3c14c92445ad6c50f0"
+  },
+  "components/UserManagementTab.jsx": {
+    "mtime": 1787230871.9591725,
+    "ast_hash": "eb30f210232c3ad8fa5958a563147351",
+    "semantic_hash": "eb30f210232c3ad8fa5958a563147351"
+  },
+  "components/VesselActivityTab.jsx": {
+    "mtime": 1787262105.3043072,
+    "ast_hash": "59728913903b9430dd6317cac9b65bcf",
+    "semantic_hash": "59728913903b9430dd6317cac9b65bcf"
+  },
+  "components/VesselMap.jsx": {
+    "mtime": 1787262179.149147,
+    "ast_hash": "ed696c5820b2245d2a9ada176399d640",
+    "semantic_hash": "ed696c5820b2245d2a9ada176399d640"
+  },
+  "components/WeatherAnalyticsTab.jsx": {
+    "mtime": 1784736465.5427792,
+    "ast_hash": "d0a896d437d09f30d957790c8879ac5e",
+    "semantic_hash": "d0a896d437d09f30d957790c8879ac5e"
+  },
+  "components/WeatherStatusIndicator.jsx": {
+    "mtime": 1784736465.5442853,
+    "ast_hash": "06760cdf00a388470074cb33646c3506",
+    "semantic_hash": "06760cdf00a388470074cb33646c3506"
+  },
+  "components/YardForecastsTab.jsx": {
+    "mtime": 1786721944.2396512,
+    "ast_hash": "89e447c29b0985595baafb2a1fa9eeeb",
+    "semantic_hash": "89e447c29b0985595baafb2a1fa9eeeb"
+  },
+  "components/common/TimeInput.jsx": {
+    "mtime": 1780122657.9900434,
+    "ast_hash": "e9989af6260b4f8f9d20a0f2970c2ee0",
+    "semantic_hash": "e9989af6260b4f8f9d20a0f2970c2ee0"
+  },
+  "components/dbmanager/ModalContent.jsx": {
+    "mtime": 1787260092.038709,
+    "ast_hash": "78586975d664435324f223c12ee806d5",
+    "semantic_hash": "78586975d664435324f223c12ee806d5"
+  },
+  "components/dbmanager/ModalField.jsx": {
+    "mtime": 1787237808.9457173,
+    "ast_hash": "e27b4c451ee8b39aeea7155da39c4e4e",
+    "semantic_hash": "e27b4c451ee8b39aeea7155da39c4e4e"
+  },
+  "constants/logbookConstants.js": {
+    "mtime": 1780122657.9916856,
+    "ast_hash": "57828be5988ddf13f5145a2a1adf5d69",
+    "semantic_hash": "57828be5988ddf13f5145a2a1adf5d69"
+  },
+  "constants/timeConstants.js": {
+    "mtime": 1786460550.837319,
+    "ast_hash": "8079a5f4540bb2382c8ab916f4c791a3",
+    "semantic_hash": "8079a5f4540bb2382c8ab916f4c791a3"
+  },
+  "context/DataContext.jsx": {
+    "mtime": 1787230497.0655556,
+    "ast_hash": "ab919e47e65b6cfcf2546cb7fea5ef1b",
+    "semantic_hash": "ab919e47e65b6cfcf2546cb7fea5ef1b"
+  },
+  "hooks/useActivities.js": {
+    "mtime": 1776838311.0911686,
+    "ast_hash": "01dc4c717931bf6a2ac85922dadc0422",
+    "semantic_hash": "01dc4c717931bf6a2ac85922dadc0422"
+  },
+  "hooks/useActivityLog.js": {
+    "mtime": 1787262236.3482175,
+    "ast_hash": "c1f78876033193708501abe64c2a0693",
+    "semantic_hash": "c1f78876033193708501abe64c2a0693"
+  },
+  "hooks/useHealthCheck.js": {
+    "mtime": 1776977567.2676444,
+    "ast_hash": "08963f5994da0cf900ee7ee79634417e",
+    "semantic_hash": "08963f5994da0cf900ee7ee79634417e"
+  },
+  "hooks/useLogbook.js": {
+    "mtime": 1776759720.9466963,
+    "ast_hash": "1dbdc0d7265a99f8c2bbc0f346ae1550",
+    "semantic_hash": "1dbdc0d7265a99f8c2bbc0f346ae1550"
+  },
+  "hooks/useMessaging.js": {
+    "mtime": 1776759720.948285,
+    "ast_hash": "e884824b178796c9ba2218d9d85a8632",
+    "semantic_hash": "e884824b178796c9ba2218d9d85a8632"
+  },
+  "hooks/useServices.js": {
+    "mtime": 1776838311.1021187,
+    "ast_hash": "bdb53594f35146256946e468e29f3b82",
+    "semantic_hash": "bdb53594f35146256946e468e29f3b82"
+  },
+  "hooks/useSessionLock.js": {
+    "mtime": 1776759720.9541235,
+    "ast_hash": "10a298bd08dc0124f04ca8f354c0162e",
+    "semantic_hash": "10a298bd08dc0124f04ca8f354c0162e"
+  },
+  "hooks/useUserProfile.js": {
+    "mtime": 1777070286.4708524,
+    "ast_hash": "7c50a4fb587ca5d9219c211f3a5a0ded",
+    "semantic_hash": "7c50a4fb587ca5d9219c211f3a5a0ded"
+  },
+  "lib/permissions.js": {
+    "mtime": 1786458799.9552505,
+    "ast_hash": "a50638783968ae3b7c2f64b76caab212",
+    "semantic_hash": "a50638783968ae3b7c2f64b76caab212"
+  },
+  "lib/supabase.js": {
+    "mtime": 1776759720.967422,
+    "ast_hash": "8bfea34221b218d4b6896a340fa893f7",
+    "semantic_hash": "8bfea34221b218d4b6896a340fa893f7"
+  },
+  "main.jsx": {
+    "mtime": 1776759720.971017,
+    "ast_hash": "4e74408757e1c61286215d6514f965bd",
+    "semantic_hash": "4e74408757e1c61286215d6514f965bd"
+  },
+  "services/api/activityService.js": {
+    "mtime": 1784736465.5573494,
+    "ast_hash": "c061b3ffa9732949d1bb3bf41f7e0d69",
+    "semantic_hash": "c061b3ffa9732949d1bb3bf41f7e0d69"
+  },
+  "services/api/auditService.js": {
+    "mtime": 1780122658.0022192,
+    "ast_hash": "a79dc7cf2265798ae7b9a361d654a35b",
+    "semantic_hash": "a79dc7cf2265798ae7b9a361d654a35b"
+  },
+  "services/api/companiesService.js": {
+    "mtime": 1780122658.0043552,
+    "ast_hash": "895e7e958e83158cd45539de4f7c1998",
+    "semantic_hash": "895e7e958e83158cd45539de4f7c1998"
+  },
+  "services/api/copilotService.js": {
+    "mtime": 1785484124.5131948,
+    "ast_hash": "1eac078b1c9222f83e14cb8042264a7e",
+    "semantic_hash": "1eac078b1c9222f83e14cb8042264a7e"
+  },
+  "services/api/logbookService.js": {
+    "mtime": 1780122658.0054154,
+    "ast_hash": "3c38791a1bd084e0b3872f5f95f04da4",
+    "semantic_hash": "3c38791a1bd084e0b3872f5f95f04da4"
+  },
+  "services/api/messagesService.js": {
+    "mtime": 1780122658.0078554,
+    "ast_hash": "8dc32358aad92c375f7ab53c1dd8df15",
+    "semantic_hash": "8dc32358aad92c375f7ab53c1dd8df15"
+  },
+  "services/api/metricsService.js": {
+    "mtime": 1780122658.009365,
+    "ast_hash": "abdd53a2c80ef79b29ad72112f2dbfd1",
+    "semantic_hash": "abdd53a2c80ef79b29ad72112f2dbfd1"
+  },
+  "services/api/scheduleService.js": {
+    "mtime": 1784736465.5583491,
+    "ast_hash": "d60494e21ae1c2b33fb24eae206d03bc",
+    "semantic_hash": "d60494e21ae1c2b33fb24eae206d03bc"
+  },
+  "services/api/trackingService.js": {
+    "mtime": 1786830284.0335655,
+    "ast_hash": "f7606cca10435be345f60b3b867f19f3",
+    "semantic_hash": "f7606cca10435be345f60b3b867f19f3"
+  },
+  "services/api/userService.js": {
+    "mtime": 1785273593.776886,
+    "ast_hash": "ae5094ddc85ccffa00146125145eaf27",
+    "semantic_hash": "ae5094ddc85ccffa00146125145eaf27"
+  },
+  "services/api/weatherService.js": {
+    "mtime": 1787230261.9594684,
+    "ast_hash": "f52f9217aecf61011221c994ac993821",
+    "semantic_hash": "f52f9217aecf61011221c994ac993821"
+  },
+  "setupTests.js": {
+    "mtime": 1776759720.9724033,
+    "ast_hash": "cebd5a467a99c89d8b4cf4b4cb95c622",
+    "semantic_hash": "cebd5a467a99c89d8b4cf4b4cb95c622"
+  },
+  "store/__tests__/useVesselStore.test.js": {
+    "mtime": 1776759720.9753199,
+    "ast_hash": "119e39fced0cd7aa06d3b67eeef455fc",
+    "semantic_hash": "119e39fced0cd7aa06d3b67eeef455fc"
+  },
+  "store/useActivityStore.js": {
+    "mtime": 1786831359.734167,
+    "ast_hash": "da33ecd8fcf9a3a4123de4ed5cdde3a1",
+    "semantic_hash": "da33ecd8fcf9a3a4123de4ed5cdde3a1"
+  },
+  "store/useConfigStore.js": {
+    "mtime": 1784736465.5784128,
+    "ast_hash": "ff197e8ac1b74ea2de7e127d83eb839d",
+    "semantic_hash": "ff197e8ac1b74ea2de7e127d83eb839d"
+  },
+  "store/useGeofenceStore.js": {
+    "mtime": 1776838311.1112456,
+    "ast_hash": "6377850cb887d8d98db07fea32fd8e99",
+    "semantic_hash": "6377850cb887d8d98db07fea32fd8e99"
+  },
+  "store/useProjectStore.js": {
+    "mtime": 1776838333.0333579,
+    "ast_hash": "9c76357172f364b9b648349cc1b66d12",
+    "semantic_hash": "9c76357172f364b9b648349cc1b66d12"
+  },
+  "store/useUIStore.js": {
+    "mtime": 1777487260.7216263,
+    "ast_hash": "93f3ab74a8e5987984554de987bf3bc2",
+    "semantic_hash": "93f3ab74a8e5987984554de987bf3bc2"
+  },
+  "store/useVesselStore.js": {
+    "mtime": 1786026107.4160795,
+    "ast_hash": "d60c008177da507823fbd7475ca14033",
+    "semantic_hash": "d60c008177da507823fbd7475ca14033"
+  },
+  "utils/activityUtils.js": {
+    "mtime": 1787230182.0280411,
+    "ast_hash": "32e1f691fbbaf29d791e65f32b6a1904",
+    "semantic_hash": "32e1f691fbbaf29d791e65f32b6a1904"
+  },
+  "utils/deviceUtils.js": {
+    "mtime": 1780122658.0249107,
+    "ast_hash": "231b332b91ecf84ea2929afe5d97ea60",
+    "semantic_hash": "231b332b91ecf84ea2929afe5d97ea60"
+  },
+  "utils/excelExporter.js": {
+    "mtime": 1784736465.5819247,
+    "ast_hash": "c8d3a0f29bdff7e1c575ad0b5b7c2081",
+    "semantic_hash": "c8d3a0f29bdff7e1c575ad0b5b7c2081"
+  },
+  "utils/excelParser.js": {
+    "mtime": 1784736465.5819247,
+    "ast_hash": "9bccc0954d90a91430a0755a8d1594c6",
+    "semantic_hash": "9bccc0954d90a91430a0755a8d1594c6"
+  },
+  "utils/geoUtils.js": {
+    "mtime": 1786660363.8717995,
+    "ast_hash": "16650573f39c3508e8dda26deac449d0",
+    "semantic_hash": "16650573f39c3508e8dda26deac449d0"
+  },
+  "utils/mooringSafety.js": {
+    "mtime": 1784736465.584446,
+    "ast_hash": "fdb467bc0bbd084471626055e93cb02b",
+    "semantic_hash": "fdb467bc0bbd084471626055e93cb02b"
+  },
+  "utils/timeFormatters.js": {
+    "mtime": 1786460321.8232505,
+    "ast_hash": "f983b4cca8eab1765edb80642be5b4a6",
+    "semantic_hash": "f983b4cca8eab1765edb80642be5b4a6"
+  }
+}

@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { weatherService } from '../services/api/weatherService';
 import { activityService } from '../services/api/activityService';
-import { Cloud, Wind, Waves, Thermometer, Calendar, Navigation, ArrowUp, RefreshCw, Anchor, MapPin, AlertTriangle } from 'lucide-react';
-import { validateMooring } from '../utils/mooringSafety';
+import { Cloud, Wind, Waves, Thermometer, Calendar, Navigation, ArrowUp, RefreshCw, MapPin, AlertTriangle } from 'lucide-react';
+import MooringCalculator from './weather/MooringCalculator';
 
 
 export default function WeatherAnalyticsTab() {
@@ -15,27 +15,6 @@ export default function WeatherAnalyticsTab() {
     const [activities, setActivities] = useState([]);
     const [loading, setLoading] = useState(false);
     const [hoveredPoint, setHoveredPoint] = useState(null);
-
-    // Mooring calculator state
-    const [calcDwt, setCalcDwt] = useState('7300');
-    const [calcBerth, setCalcBerth] = useState('T1');
-    const [calcWindDir, setCalcWindDir] = useState(180);
-    const [calcMooringHeading, setCalcMooringHeading] = useState(18);
-    const [calcHs, setCalcHs] = useState(0.5);
-    const [calcWindSpeed, setCalcWindSpeed] = useState(12);
-
-    // Auto-update heading based on Berth choice
-    useEffect(() => {
-        const berthHeadingMap = {
-            'T1': 18,
-            'T2': 44,
-            'T3': 44,
-            'T7': 21
-        };
-        if (berthHeadingMap[calcBerth] !== undefined) {
-            setCalcMooringHeading(berthHeadingMap[calcBerth]);
-        }
-    }, [calcBerth]);
 
 
     // Carica le navi disponibili
@@ -173,7 +152,7 @@ export default function WeatherAnalyticsTab() {
         const pathGenovaWave = pointsGenovaWave.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
         const pathGenovaWind = pointsGenovaWind.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
 
-        // 1. Fasce di sfondo colorate per le attività della nave
+        // 1. Fasce di sfondo colorate per le attivitÃ  della nave
         const activityBands = [];
         activities.forEach(act => {
             const tStart = new Date(act.start_time).getTime();
@@ -192,7 +171,7 @@ export default function WeatherAnalyticsTab() {
                     'Navigation': '#dbeafe',   // blue-100 (molto chiaro)
                     'Anchorage': '#f3e8ff',    // purple-100 (molto chiaro)
                     'Stand-by': '#f1f5f9',     // slate-100 (molto chiaro)
-                    'Weather Stand-by': '#e2e8f0', // slate-200 (più scuro per risaltare)
+                    'Weather Stand-by': '#e2e8f0', // slate-200 (piÃ¹ scuro per risaltare)
                 };
 
                 activityBands.push({
@@ -205,7 +184,7 @@ export default function WeatherAnalyticsTab() {
             }
         });
 
-        // 2. Etichette navigazione: porto da → porto a
+        // 2. Etichette navigazione: porto da â†’ porto a
         const activityLabels = [];
         activities.forEach(act => {
             if (act.activity_type !== 'Navigation') return;
@@ -220,7 +199,7 @@ export default function WeatherAnalyticsTab() {
                 activityLabels.push({
                     x: toX(act.start_time),
                     type: 'departure',
-                    label: `⚓ ${fromName || 'PARTENZA'} ${toName ? '➔ ' + toName : ''}`,
+                    label: `âš“ ${fromName || 'PARTENZA'} ${toName ? 'âž” ' + toName : ''}`,
                     time: act.start_time,
                 });
             }
@@ -230,7 +209,7 @@ export default function WeatherAnalyticsTab() {
                 activityLabels.push({
                     x: toX(act.end_time),
                     type: 'arrival',
-                    label: `🏁 ${toName || 'ARRIVO'}`,
+                    label: `ðŸ ${toName || 'ARRIVO'}`,
                     time: act.end_time,
                 });
             }
@@ -254,7 +233,7 @@ export default function WeatherAnalyticsTab() {
                     </div>
                     <div>
                         <h2 className="text-xl sm:text-2xl font-extrabold text-slate-800 tracking-tight">Analisi Meteo di Navigazione</h2>
-                        <p className="text-xs font-bold text-sky-500 uppercase tracking-widest mt-0.5">Route Weather Analytics — Open-Meteo</p>
+                        <p className="text-xs font-bold text-sky-500 uppercase tracking-widest mt-0.5">Route Weather Analytics â€” Open-Meteo</p>
                     </div>
                 </div>
 
@@ -274,7 +253,7 @@ export default function WeatherAnalyticsTab() {
                         <Calendar size={14} className="text-slate-400" />
                         <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}
                             className="bg-transparent text-xs font-bold text-slate-700 focus:outline-none cursor-pointer" />
-                        <span className="text-slate-300 text-xs">➔</span>
+                        <span className="text-slate-300 text-xs">âž”</span>
                         <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)}
                             className="bg-transparent text-xs font-bold text-slate-700 focus:outline-none cursor-pointer" />
                     </div>
@@ -301,12 +280,12 @@ export default function WeatherAnalyticsTab() {
                     </p>
                     <div className="flex items-center gap-2 bg-sky-50 border border-sky-100 rounded-2xl px-4 py-2 mt-2">
                         <MapPin size={13} className="text-sky-500" />
-                        <span className="text-[11px] font-black text-sky-600 uppercase tracking-widest">La raccolta dati è attiva — slot: ogni 4h</span>
+                        <span className="text-[11px] font-black text-sky-600 uppercase tracking-widest">La raccolta dati Ã¨ attiva â€” slot: ogni 4h</span>
                     </div>
                 </div>
             ) : (
                 <div className="space-y-10">
-                    {/* KPI Cards — significative per fleet tracking */}
+                    {/* KPI Cards â€” significative per fleet tracking */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
                         <div className="bg-gradient-to-br from-cyan-50 to-white border border-cyan-100/50 rounded-[2rem] p-5 shadow-sm flex items-center justify-between">
                             <div>
@@ -414,7 +393,7 @@ export default function WeatherAnalyticsTab() {
                                         </linearGradient>
                                     </defs>
 
-                                    {/* === FASCE DI SFONDO ATTIVITÀ === */}
+                                    {/* === FASCE DI SFONDO ATTIVITÃ€ === */}
                                     {chartData.activityBands && chartData.activityBands.map((band, idx) => (
                                         <g key={`band-${idx}`}>
                                             <rect
@@ -446,7 +425,7 @@ export default function WeatherAnalyticsTab() {
                                         return <line key={i} x1={chartData.padding} y1={y} x2={chartData.width - chartData.padding} y2={y} stroke="#f1f5f9" strokeDasharray="4 4" strokeWidth="1.5" />;
                                     })}
 
-                                    {/* === SCANNO DIGA — curve ghost trasparenti === */}
+                                    {/* === SCANNO DIGA â€” curve ghost trasparenti === */}
                                     {chartData.pathGenovaWave && (
                                         <path d={chartData.pathGenovaWave} fill="none" stroke="#06b6d4" strokeWidth="2" strokeDasharray="6 4" opacity="0.3" strokeLinecap="round" />
                                     )}
@@ -489,13 +468,13 @@ export default function WeatherAnalyticsTab() {
                                         );
                                     })}
 
-                                    {/* === VESSEL — area onda === */}
+                                    {/* === VESSEL â€” area onda === */}
                                     <path d={chartData.areaWave} fill="url(#waveGrad)" />
 
-                                    {/* === VESSEL — linea onda === */}
+                                    {/* === VESSEL â€” linea onda === */}
                                     <path d={chartData.pathWave} fill="none" stroke="#06b6d4" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
 
-                                    {/* === VESSEL — linea vento === */}
+                                    {/* === VESSEL â€” linea vento === */}
                                     <path d={chartData.pathWind} fill="none" stroke="#f59e0b" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="1 1" />
 
                                     {/* Punti interattivi vessel */}
@@ -551,7 +530,7 @@ export default function WeatherAnalyticsTab() {
                                     <div className="flex items-center gap-3">
                                         <Wind size={16} className="text-amber-500" />
                                         <div>
-                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block leading-none mb-1">Velocità Vento</span>
+                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block leading-none mb-1">VelocitÃ  Vento</span>
                                             <span className="text-xs font-extrabold text-slate-700">{hoveredPoint.wind.val.toFixed(0)} kn</span>
                                         </div>
                                     </div>
@@ -561,7 +540,7 @@ export default function WeatherAnalyticsTab() {
                                                 style={{ transform: `rotate(${hoveredPoint.wave.log.wind_direction}deg)` }} />
                                             <div>
                                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block leading-none mb-1">Direzione Vento</span>
-                                                <span className="text-xs font-extrabold text-slate-700">{hoveredPoint.wave.log.wind_direction}°</span>
+                                                <span className="text-xs font-extrabold text-slate-700">{hoveredPoint.wave.log.wind_direction}Â°</span>
                                             </div>
                                         </div>
                                     )}
@@ -569,7 +548,7 @@ export default function WeatherAnalyticsTab() {
                                         <Thermometer size={16} className="text-rose-500" />
                                         <div>
                                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block leading-none mb-1">Temperatura</span>
-                                            <span className="text-xs font-extrabold text-slate-700">{hoveredPoint.wave.log.temperature || '—'} °C</span>
+                                            <span className="text-xs font-extrabold text-slate-700">{hoveredPoint.wave.log.temperature || 'â€”'} Â°C</span>
                                         </div>
                                     </div>
                                 </div>
@@ -578,207 +557,7 @@ export default function WeatherAnalyticsTab() {
                     )}
 
                     {/* Calcolatore Manuale di Sicurezza Ormeggio */}
-                    <div className="bg-slate-50/50 border border-slate-100 rounded-[2.5rem] p-8 sm:p-10 shadow-inner">
-                        <div className="flex items-center gap-3 mb-8">
-                            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-400 to-indigo-500 flex items-center justify-center text-white shadow-md">
-                                <Anchor className="w-5 h-5" />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-extrabold text-slate-800 tracking-tight">Calcolatore Manuale di Sicurezza Ormeggio</h3>
-                                <p className="text-[10px] font-bold text-sky-500 uppercase tracking-wider">Verifica Prescrizioni RINA e Limiti di Disormeggio</p>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                            {/* Form Inputs */}
-                            <div className="lg:col-span-7 space-y-6">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Classe Nave (DWT)</label>
-                                        <select 
-                                            value={calcDwt} 
-                                            onChange={(e) => setCalcDwt(e.target.value)}
-                                            className="w-full bg-white border border-slate-200 rounded-2xl px-4 py-2.5 text-xs font-bold text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 cursor-pointer"
-                                        >
-                                            <option value="40000">40.000 DWT (es. Sider Abidjan)</option>
-                                            <option value="7300">7.300 DWT (es. Rebecca, Orion, Buffalo, Rodi)</option>
-                                            <option value="5270">5.270 DWT (es. Fabio Duo Z, Maria Vittoria Z, Annamaria Z)</option>
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Ormeggio / Banchina</label>
-                                        <select 
-                                            value={calcBerth} 
-                                            onChange={(e) => setCalcBerth(e.target.value)}
-                                            className="w-full bg-white border border-slate-200 rounded-2xl px-4 py-2.5 text-xs font-bold text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-400 cursor-pointer"
-                                        >
-                                            <option value="T1">Scanno Diga T1 (18° N)</option>
-                                            <option value="T2">Scanno Diga T2 (44° N)</option>
-                                            <option value="T3">Scanno Diga T3 (44° N)</option>
-                                            <option value="T7">Scanno Diga T7 (21° N)</option>
-                                            <option value="CUSTOM">Altro / Personalizzato</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                {calcBerth === 'CUSTOM' && (
-                                    <div>
-                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Angolo Ormeggio G (Orientamento Prua/Boe) [°]</label>
-                                        <div className="flex items-center gap-3">
-                                            <input 
-                                                type="range" min="0" max="360" 
-                                                value={calcMooringHeading} 
-                                                onChange={(e) => setCalcMooringHeading(Number(e.target.value))}
-                                                className="flex-1 accent-sky-500"
-                                            />
-                                            <input 
-                                                type="number" min="0" max="360" 
-                                                value={calcMooringHeading} 
-                                                onChange={(e) => setCalcMooringHeading(Number(e.target.value))}
-                                                className="w-20 bg-white border border-slate-200 rounded-2xl px-3 py-1.5 text-xs font-bold text-slate-700 text-center"
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-
-                                <div>
-                                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Direzione Vento Previsto F [°]</label>
-                                    <div className="flex items-center gap-3">
-                                        <input 
-                                            type="range" min="0" max="360" 
-                                            value={calcWindDir} 
-                                            onChange={(e) => setCalcWindDir(Number(e.target.value))}
-                                            className="flex-1 accent-sky-500"
-                                        />
-                                        <input 
-                                            type="number" min="0" max="360" 
-                                            value={calcWindDir} 
-                                            onChange={(e) => setCalcWindDir(Number(e.target.value))}
-                                            className="w-20 bg-white border border-slate-200 rounded-2xl px-3 py-1.5 text-xs font-bold text-slate-700 text-center"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    <div>
-                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Altezza Onda Hs Prevista [m]</label>
-                                        <div className="flex items-center gap-3">
-                                            <input 
-                                                type="range" min="0" max="3" step="0.1" 
-                                                value={calcHs} 
-                                                onChange={(e) => setCalcHs(Number(e.target.value))}
-                                                className="flex-1 accent-sky-500"
-                                            />
-                                            <span className="w-16 text-xs font-extrabold text-slate-700 bg-white border border-slate-200 rounded-2xl py-1.5 text-center shadow-sm">{calcHs.toFixed(1)} m</span>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Velocità Vento Prevista [kn]</label>
-                                        <div className="flex items-center gap-3">
-                                            <input 
-                                                type="range" min="0" max="40" 
-                                                value={calcWindSpeed} 
-                                                onChange={(e) => setCalcWindSpeed(Number(e.target.value))}
-                                                className="flex-1 accent-sky-500"
-                                            />
-                                            <span className="w-16 text-xs font-extrabold text-slate-700 bg-white border border-slate-200 rounded-2xl py-1.5 text-center shadow-sm">{calcWindSpeed} kn</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Results Panel */}
-                            <div className="lg:col-span-5 flex flex-col justify-between">
-                                {(() => {
-                                    const validation = validateMooring({
-                                        dwt: calcDwt,
-                                        berth: calcBerth,
-                                        windDir: calcWindDir,
-                                        mooringHeading: calcMooringHeading,
-                                        hs: calcHs,
-                                        windSpeed: calcWindSpeed
-                                    });
-
-                                    const statusColors = {
-                                        'POSITIVO': {
-                                            bg: 'from-emerald-500 to-teal-600',
-                                            light: 'bg-emerald-400 shadow-emerald-500/50',
-                                            text: 'Safe / Positivo',
-                                            desc: 'Le condizioni meteo rientrano pienamente nei parametri di stabilità e sicurezza prescritti dalle normative RINA.'
-                                        },
-                                        'NEGATIVO': {
-                                            bg: 'from-amber-500 to-orange-600',
-                                            light: 'bg-amber-400 shadow-amber-500/50',
-                                            text: 'Attenzione / Limite Superato',
-                                            desc: 'Uno o più parametri (altezza onda o vento) hanno superato le soglie limite previste per questo assetto.'
-                                        },
-                                        'ERRORE': {
-                                            bg: 'from-rose-500 to-red-600',
-                                            light: 'bg-rose-400 shadow-rose-500/50',
-                                            text: 'Pericolo / Disormeggio Obbligatorio',
-                                            desc: 'Lo scarto angolare del vento rispetto alla prua ricade nella zona critica di instabilità. La nave deve procedere al disormeggio immediato.'
-                                        }
-                                    }[validation.status] || {
-                                        bg: 'from-slate-500 to-slate-600',
-                                        light: 'bg-slate-400',
-                                        text: 'Non Noto',
-                                        desc: 'Dati incompleti o errati per eseguire la verifica.'
-                                    };
-
-                                    return (
-                                        <div className="h-full flex flex-col justify-between bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm relative overflow-hidden min-h-[300px]">
-                                            {/* Traffic light header */}
-                                            <div className={`text-white p-5 rounded-3xl bg-gradient-to-tr ${statusColors.bg} flex items-center justify-between shadow-lg`}>
-                                                <div className="flex items-center gap-3">
-                                                    <div className={`w-3.5 h-3.5 rounded-full ${statusColors.light} animate-pulse shadow-md`} />
-                                                    <div>
-                                                        <span className="text-[8px] font-black uppercase tracking-widest text-white/70 block leading-none mb-1">Esito RINA</span>
-                                                        <span className="text-sm font-extrabold tracking-tight">{statusColors.text}</span>
-                                                    </div>
-                                                </div>
-                                                <span className="text-2xl font-black">{validation.delta.toFixed(0)}°<span className="text-xs font-bold ml-1 text-white/80">Delta</span></span>
-                                            </div>
-
-                                            {/* Breakdown info */}
-                                            <div className="my-6 space-y-4">
-                                                <p className="text-xs font-semibold text-slate-500 leading-normal">{statusColors.desc}</p>
-                                                
-                                                <div className="h-px bg-slate-100 w-full" />
-                                                
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div className="bg-slate-50 rounded-2xl p-3">
-                                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block mb-1">Hs Massimo</span>
-                                                        <span className="text-xs font-extrabold text-slate-700">
-                                                            {validation.hsLimit === 'ERRORE' ? 'ERRORE' : `${validation.hsLimit?.toFixed(1)} m`}
-                                                        </span>
-                                                    </div>
-                                                    <div className="bg-slate-50 rounded-2xl p-3">
-                                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block mb-1">Vento Massimo</span>
-                                                        <span className="text-xs font-extrabold text-slate-700">{validation.windLimit} kn</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Visual Compass direction */}
-                                            <div className="flex items-center justify-center gap-4 bg-slate-50 rounded-2xl p-3 mt-auto">
-                                                <div className="relative w-12 h-12 rounded-full border border-slate-200 flex items-center justify-center">
-                                                    <ArrowUp size={16} className="text-amber-500 absolute transition-transform duration-300" 
-                                                        style={{ transform: `rotate(${calcWindDir}deg)` }} />
-                                                    <div className="w-1 h-3 bg-slate-400 rounded-full" style={{ transform: `rotate(${calcMooringHeading}deg)` }} />
-                                                </div>
-                                                <div>
-                                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block leading-none mb-1">Orientamento</span>
-                                                    <span className="text-[10px] font-bold text-slate-600">Prua: {calcMooringHeading}° | Vento: {calcWindDir}°</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    );
-                                })()}
-                            </div>
-                        </div>
-                    </div>
+                    <MooringCalculator />
 
                     {/* Tabella rilevazioni */}
 
@@ -794,7 +573,7 @@ export default function WeatherAnalyticsTab() {
                                         <th className="px-6 py-3">Timestamp (UTC)</th>
                                         <th className="px-6 py-3">Posizione Rilevata</th>
                                         <th className="px-6 py-3">Altezza Onda</th>
-                                        <th className="px-6 py-3">Velocità Vento</th>
+                                        <th className="px-6 py-3">VelocitÃ  Vento</th>
                                         <th className="px-6 py-3">Direzione Vento</th>
                                         <th className="px-6 py-3">Temp. Aria</th>
                                     </tr>
@@ -806,8 +585,8 @@ export default function WeatherAnalyticsTab() {
                                             <td className="px-6 py-3 font-mono text-[11px] text-sky-600">{log.lat?.toFixed(2)}N, {log.lon?.toFixed(2)}E</td>
                                             <td className="px-6 py-3 flex items-center gap-1"><Waves size={12} className="text-cyan-400" /> {log.wave_height?.toFixed(1)} m</td>
                                             <td className="px-6 py-3"><Wind size={12} className="text-amber-400 inline mr-1" /> {log.wind_speed?.toFixed(0)} kn</td>
-                                            <td className="px-6 py-3 font-mono">{log.wind_direction}°</td>
-                                            <td className="px-6 py-3 text-rose-500">{log.temperature || '—'} °C</td>
+                                            <td className="px-6 py-3 font-mono">{log.wind_direction}Â°</td>
+                                            <td className="px-6 py-3 text-rose-500">{log.temperature || 'â€”'} Â°C</td>
                                         </tr>
                                     ))}
                                 </tbody>
