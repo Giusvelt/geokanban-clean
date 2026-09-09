@@ -186,11 +186,9 @@ export default function VesselMap({ geofences = [], vesselPositions = [], height
 
     // Monitor map zoom and interaction
     const MapEvents = () => {
-        const { set3DActive, setFocusCoords } = useUIStore();
         const map = useMapEvents({
             zoomend: () => {
-                const zoom = map.getZoom();
-                // Se lo zoom è estremo (>18), potremmo suggerire il 3D
+                // Se lo zoom e estremo (>18), potremmo suggerire il 3D
             }
         });
         return null;

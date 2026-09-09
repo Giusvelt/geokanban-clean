@@ -1,9 +1,8 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { DataProvider, useFleet, useOperations } from './context/DataContext';
 import { supabase } from './lib/supabase';
 import { useUserProfile } from './hooks/useUserProfile';
-import { useSessionLock } from './hooks/useSessionLock';
 import { can, ROLES } from './lib/permissions';
 const LandingPage            = lazy(() => import('./components/LandingPage'));
 const VesselMap               = lazy(() => import('./components/VesselMap'));
@@ -34,20 +33,17 @@ import TelemetryAlertBanner from './components/TelemetryAlertBanner';
 
 
 import { Anchor, Activity, Target, Database, Edit3, Calendar, Rewind, Users, User, MessageSquare, Map as MapIcon, Bell, Cloud, Bot } from 'lucide-react';
-import logoGk from './assets/logo_gk.png';
 import './index.css';
-import { useUIStore } from './store/useUIStore';
 
 function ActivityDashboard({ onSignOut }) {
   const { companyVesselIds, crewVesselId, vesselPositions, geofences } = useFleet();
-  const { activities, schedules, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear } = useOperations();
+  const { activities, schedules } = useOperations();
   const { profile, updateProfile } = useUserProfile();
   const [activeTab, setActiveTab] = useState('activity');
   const [mobileTab, setMobileTab] = useState('fleet');
   const [showProfile, setShowProfile] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  const now = new Date();
   const [vesselFilter, setVesselFilter] = useState('All');
 
   useEffect(() => {

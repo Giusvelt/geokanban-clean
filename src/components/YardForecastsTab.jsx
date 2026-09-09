@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useFleet, useOperations } from '../context/DataContext';
+import { useOperations } from '../context/DataContext';
 import { Cloud, Wind, Waves, Thermometer, AlertTriangle, CheckCircle, Clock, Calendar, ShieldAlert, Anchor, ArrowUp, Navigation } from 'lucide-react';
-import { validateMooring } from '../utils/mooringSafety';
 
 export default function YardForecastsTab() {
-    const { vessels } = useFleet();
-    const { activities, productionPlans, selectedMonth, selectedYear } = useOperations();
+    const { productionPlans, selectedMonth, selectedYear } = useOperations();
     const [forecast, setForecast] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [selectedDwtClass, setSelectedDwtClass] = useState('7300'); // '40000', '7300', '5270'
     const [selectedDayTab, setSelectedDayTab] = useState(0); // 0 = Oggi, 1 = Domani, 2 = Dopodomani
 
     const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
@@ -111,15 +108,7 @@ export default function YardForecastsTab() {
         return days;
     }, [forecast]);
 
-    // Berths definition
-    const berths = [
-        { id: 'T1', name: 'Scanno Diga T1', heading: 18 },
-        { id: 'T2', name: 'Scanno Diga T2', heading: 44 },
-        { id: 'T3', name: 'Scanno Diga T3', heading: 44 },
-        { id: 'T5', name: 'Scanno Diga T5', heading: 22 },
-        { id: 'T6', name: 'Scanno Diga T6', heading: 24 },
-        { id: 'T7', name: 'Scanno Diga T7', heading: 21 }
-    ];
+
 
     if (loading) {
         return (

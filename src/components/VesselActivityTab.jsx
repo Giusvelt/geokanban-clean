@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useFleet, useOperations, useConfig } from '../context/DataContext';
 import { messagesService } from '../services/api/messagesService';
 import { activityService } from '../services/api/activityService';
-import { formatDate, formatHour, formatTime, calcDuration } from '../utils/timeFormatters';
+import { formatTime, calcDuration } from '../utils/timeFormatters';
 import { activityColor, getVesselActivities, countActivitiesByType } from '../utils/activityUtils';
 import { exportActivitiesToExcel } from '../utils/excelExporter';
 import {
@@ -15,25 +15,18 @@ import LogbookEntryModal from './LogbookEntryModal';
 import ActivityChatModal from './ActivityChatModal';
 import ManualActivityModal from './ManualActivityModal';
 import EditActivityModal from './EditActivityModal';
-
 import { can } from '../lib/permissions';
-import complianceData from '../data/compliance_kpi_data.json';
-
-
-
 
 
 export default function VesselActivityTab({ 
     view = 'all',
     vesselFilter, setVesselFilter
 }) {
-    const { vessels, geofences, crewVesselId, companyVesselIds } = useFleet();
-    const { activities, lastUpdate, loading, fetchActivities, productionPlans, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear } = useOperations();
+    const { vessels, crewVesselId, companyVesselIds } = useFleet();
+    const { activities, loading, fetchActivities, productionPlans, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear } = useOperations();
     const { profile: userProfile } = useConfig();
     const perms = userProfile?.permissions || can(userProfile?.role);
 
-    const [showKpiArchive, setShowKpiArchive] = useState(false);
-    const [showComplianceArchive, setShowComplianceArchive] = useState(false);
     const [search, setSearch] = useState('');
     const [logbookActivity, setLogbookActivity] = useState(null);
     const [chatActivity, setChatActivity] = useState(null);
@@ -112,7 +105,7 @@ export default function VesselActivityTab({
             return { ...a, overlappingStandbys: overlaps };
         });
 
-        return { filtered: base, weatherStandbys: globalStandbys };
+        return { filtered: base };
     }, [activitiesInPeriod, vesselFilter, search]);
 
     const kpiByMonth = useMemo(() => {

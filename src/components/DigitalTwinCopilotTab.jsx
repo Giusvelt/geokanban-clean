@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Send, Bot, User, Loader2, Sparkles, AlertCircle, Database, FileText, MessageSquare, Download, BarChart2 } from 'lucide-react';
 import { askDigitalTwinCopilot, fetchCopilotChatHistory, saveCopilotChatMessage, clearCopilotChatHistory } from '../services/api/copilotService';
 import ReactMarkdown from 'react-markdown';
@@ -58,13 +58,6 @@ export default function DigitalTwinCopilotTab() {
     ]);
   };
 
-
-  const suggestedQuestions = [
-    "Quante tonnellate ha caricato Fabio Duò Z ieri?",
-    "Quali navi hanno avuto ritardi per il vento a Scanno Diga?",
-    "Cosa è stato detto nel gruppo Diga Team sul pescaggio di Maria Vittoria Z?",
-    "Qual è il tonnellaggio totale scaricato a Pra questo mese?"
-  ];
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -168,9 +161,9 @@ export default function DigitalTwinCopilotTab() {
         </div>
       );
     },
-    th: ({ node, ...props }) => <th className="px-4 py-2 bg-surface-low/20 font-bold border-b border-surface-low/50" {...props} />,
-    td: ({ node, ...props }) => <td className="px-4 py-2 border-b border-surface-low/20 last:border-b-0" {...props} />,
-    code: ({ node, inline, className, children, ...props }) => {
+    th: ({ ...props }) => <th className="px-4 py-2 bg-surface-low/20 font-bold border-b border-surface-low/50" {...props} />,
+    td: ({ ...props }) => <td className="px-4 py-2 border-b border-surface-low/20 last:border-b-0" {...props} />,
+    code: ({ inline, className, children, ...props }) => {
       const match = /language-(\w+)/.exec(className || '');
       const codeString = String(children).replace(/\n$/, '');
       
@@ -233,7 +226,7 @@ export default function DigitalTwinCopilotTab() {
               </div>
             );
           }
-        } catch (e) {
+        } catch {
           // If it fails to parse as our custom chart JSON, fall back to normal code block
         }
       }

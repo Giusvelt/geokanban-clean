@@ -28,8 +28,7 @@ export default function LogbookWriterTab() {
 
     const perms = profile?.permissions || can(profile?.role);
 
-    const [edits, setEdits] = useState({});
-    const [savingId, setSavingId] = useState(null);
+
     const [servicesMap, setServicesMap] = useState({});
     const [editActivity, setEditActivity] = useState(null);
     const [chatActivity, setChatActivity] = useState(null);

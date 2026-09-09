@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useFleet, useOperations } from '../context/DataContext';
 import { Target, TrendingUp, Package, Edit2, Check, X, Ship, Trash2, BarChart2, RefreshCw, CalendarDays } from 'lucide-react';
 import SectionHeader from './SectionHeader';
@@ -38,7 +38,6 @@ export default function ProductionTargetTab() {
 
     const globalPlan = (productionPlans || []).find(p => p.vessel_id === null && p.period_name === currentPeriod);
     const totalTarget = summaryEdit !== null ? summaryEdit : (globalPlan?.target_quantity || 300000);
-    const remainingTotal = Math.max(0, totalTarget - deliveredTotal);
 
     const handleSaveSummary = async () => {
         if (summaryEdit === null) return;
@@ -57,51 +56,7 @@ export default function ProductionTargetTab() {
         }
     };
 
-    const handleDeleteVessel = async (vesselId, vesselName) => {
-        const confirmDelete = window.confirm(`ATTENZIONE OPERAZIONE DISTRUTTIVA!\nStai per eliminare per sempre la nave "${vesselName}". Tutte le card ed eventi legati potrebbero essere cancellati. Sei sicuro di voler procedere?`);
-        if (!confirmDelete) return;
 
-        try {
-            const result = await deleteVessel(vesselId);
-            if (!result.success) throw new Error(result.error || 'Errore database');
-        } catch (error) {
-            alert('Impossibile eliminare la nave. Errore: ' + error.message);
-        }
-    };
-
-    const handleSaveVessel = async (vesselId) => {
-        const edit = vesselEdits[vesselId];
-        if (!edit) return;
-
-        try {
-            const plan = (productionPlans || []).find(p => p.vessel_id === vesselId && p.period_name === currentPeriod);
-
-            const targetQty = edit.targetQty !== undefined ? Number(edit.targetQty) : (plan?.target_quantity || 0);
-            const grossTonnage = edit.grossTonnage !== undefined ? Number(edit.grossTonnage) : null;
-            
-            const planPayload = {
-                vessel_id: vesselId,
-                period_name: currentPeriod,
-                target_quantity: targetQty,
-                target_trips: plan?.target_trips || 0
-            };
-            
-            await upsertPlan(planPayload);
-
-            if (grossTonnage !== null) {
-                const res = await updateVessel(vesselId, { gross_tonnage: grossTonnage });
-                if (!res.success) throw new Error(res.error);
-            }
-
-            setVesselEdits(prev => {
-                const next = { ...prev };
-                delete next[vesselId];
-                return next;
-            });
-        } catch (err) {
-            alert('Save failed: ' + err.message);
-        }
-    };
 
     return (
         <div className="pt-tab-container p-4 lg:p-6 pb-20">
@@ -112,7 +67,7 @@ export default function ProductionTargetTab() {
                     icon={Target}
                 />
                 
-                {/* Period Selector — Sincronizzato con il KI Stabilization v3.15 */}
+                {/* Period Selector â€” Sincronizzato con il KI Stabilization v3.15 */}
                 <div className="flex items-center bg-white border border-surface-low/30 rounded-xl overflow-hidden shadow-sm self-start lg:self-center">
                     <select 
                         value={selectedMonth} 
@@ -230,11 +185,11 @@ export default function ProductionTargetTab() {
                     </div>
                 </div>
 
-                {/* 📊 KPI / M — MONTHLY PERFORMANCE ARCHIVE (A SCOMPARSA) */}
+                {/* ðŸ“Š KPI / M â€” MONTHLY PERFORMANCE ARCHIVE (A SCOMPARSA) */}
                 <div className="kpi-archive-section mb-6">
                     <div className="kpi-archive-header" onClick={() => setShowKpiArchive(!showKpiArchive)}>
                         <BarChart2 size={18} />
-                        <span>KPI / M — Monthly Performance Archive</span>
+                        <span>KPI / M â€” Monthly Performance Archive</span>
                         <div className="kpi-archive-toggle">
                             <RefreshCw size={14} className={showKpiArchive ? 'rotate-180 transition-transform duration-500' : 'transition-transform duration-500'} />
                         </div>
@@ -257,7 +212,7 @@ export default function ProductionTargetTab() {
                                 <tbody>
                                     {[
                                         { period: 'July 2026', loading: 65, navigation: 248, unloading: 59, goal: '300k t', ops: 372, pct: totalTarget > 0 ? Math.round((deliveredTotal / totalTarget) * 100) : 0, delivered: `${Math.round(deliveredTotal/1000)}k`, active: true },
-                                        { period: 'June 2026', loading: 7, navigation: 132, unloading: 3, goal: '—', ops: 142, pct: 0, delivered: '11k', active: false }
+                                        { period: 'June 2026', loading: 7, navigation: 132, unloading: 3, goal: 'â€”', ops: 142, pct: 0, delivered: '11k', active: false }
                                     ].map((k, i) => (
                                         <tr key={i} className={k.active ? 'kpi-row-active' : ''}>
                                             <td>
@@ -291,11 +246,11 @@ export default function ProductionTargetTab() {
                     )}
                 </div>
 
-                {/* 📊 KPI / M — WORK PROGRAM COMPLIANCE ARCHIVE (PLANNED VS ACTUAL - A SCOMPARSA) */}
+                {/* ðŸ“Š KPI / M â€” WORK PROGRAM COMPLIANCE ARCHIVE (PLANNED VS ACTUAL - A SCOMPARSA) */}
                 <div className="kpi-archive-section mb-8">
                     <div className="kpi-archive-header" onClick={() => setShowComplianceArchive(!showComplianceArchive)}>
                         <BarChart2 size={18} />
-                        <span>KPI / M — Work Program Compliance Archive (Planned vs. Actual)</span>
+                        <span>KPI / M â€” Work Program Compliance Archive (Planned vs. Actual)</span>
                         <div className="kpi-archive-toggle">
                             <RefreshCw size={14} className={showComplianceArchive ? 'rotate-180 transition-transform duration-500' : 'transition-transform duration-500'} />
                         </div>
@@ -349,12 +304,12 @@ export default function ProductionTargetTab() {
                     )}
                 </div>
 
-                {/* 📊 TABELLA ANAGRAFICA E PRODUZIONE NAVALE DB (TRASFORMAZIONE COMPLETATA) */}
+                {/* ðŸ“Š TABELLA ANAGRAFICA E PRODUZIONE NAVALE DB (TRASFORMAZIONE COMPLETATA) */}
                 <div className="bg-white rounded-2xl p-6 border border-surface-low shadow-sm mb-8">
                     <div className="flex items-center justify-between mb-4 pb-3 border-b border-surface-low">
                         <div>
                             <h3 className="text-base font-manrope font-extrabold text-on-surface">Anagrafica & Produzione Navale Calcolata da DB</h3>
-                            <p className="text-xs text-on-surface/50 font-medium">Produzione calcolata sui dati reali del DB: Carico Medio (Avg Cargo) × Conteggio Attività di Loading nei Geofence</p>
+                            <p className="text-xs text-on-surface/50 font-medium">Produzione calcolata sui dati reali del DB: Carico Medio (Avg Cargo) Ã— Conteggio AttivitÃ  di Loading nei Geofence</p>
                         </div>
                         <span className="text-[10px] font-black uppercase tracking-wider bg-primary/10 text-primary px-3 py-1 rounded-full">
                             Fonte Dati: Live Database
@@ -388,9 +343,9 @@ export default function ProductionTargetTab() {
                                                 <Ship size={16} className="text-primary opacity-60" />
                                                 <span>{v.name}</span>
                                             </td>
-                                            <td className="py-3 px-4 font-mono text-on-surface/60">{v.mmsi || '—'}</td>
+                                            <td className="py-3 px-4 font-mono text-on-surface/60">{v.mmsi || 'â€”'}</td>
                                             <td className="py-3 px-4 font-medium text-on-surface/70">{v.type || 'Barge / Carrier'}</td>
-                                            <td className="py-3 px-4 text-center font-bold">{cargo > 0 ? `${cargo.toLocaleString()} t` : '—'}</td>
+                                            <td className="py-3 px-4 text-center font-bold">{cargo > 0 ? `${cargo.toLocaleString()} t` : 'â€”'}</td>
                                             <td className="py-3 px-4 text-center font-black text-green-600 bg-green-50/50 rounded-lg">{loadingCount}</td>
                                             <td className="py-3 px-4 text-center font-bold text-amber-600">{unloadingCount}</td>
                                             <td className="py-3 px-4 text-right font-black text-primary text-sm">

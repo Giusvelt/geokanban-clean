@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { X, UserPlus, Mail, User, Shield, Anchor, Map as MapIcon, BookOpen, Layers, Globe, CheckCircle2, AlertCircle, Eye, EyeOff, RefreshCw, Calendar, Rewind, Target, Cloud, Box, Database, Unlock, Edit2 } from 'lucide-react';
 import { userService } from '../services/api/userService';
 
@@ -163,14 +163,14 @@ export default function AddUserModal({ onClose, onUserAdded, companies, vessels 
                                         { id: 'access_logbook', label: 'Certified Logbook', desc: 'Invio ed edit per sottomissione', icon: BookOpen },
                                         { id: 'see_all_vessels', label: 'Global Fleet View', desc: 'Vede tutte le navi', icon: Globe },
                                         { id: 'admin_dashboard', label: 'Admin Dashboard', desc: 'Accesso a Dashboard Admin', icon: Shield },
-                                        { id: 'see_logbook_submitted', label: 'Submitted Logbooks Tab', desc: 'Visibilità logbooks sottomessi', icon: Edit2 },
-                                        { id: 'see_schedule', label: 'Schedule Tab', desc: 'Visibilità tab pianificazione', icon: Calendar },
+                                        { id: 'see_logbook_submitted', label: 'Submitted Logbooks Tab', desc: 'VisibilitÃ  logbooks sottomessi', icon: Edit2 },
+                                        { id: 'see_schedule', label: 'Schedule Tab', desc: 'VisibilitÃ  tab pianificazione', icon: Calendar },
                                         { id: 'edit_schedule', label: 'Edit Schedule', desc: 'Abilita modifiche a calendario', icon: Unlock },
-                                        { id: 'see_rewind', label: 'Rewind Tab', desc: 'Visibilità tab Mission Rewind', icon: Rewind },
-                                        { id: 'see_production', label: 'Production Tab', desc: 'Visibilità tab Production Targets', icon: Target },
-                                        { id: 'see_weather', label: 'Weather Tab', desc: 'Visibilità tab Weather Analytics', icon: Cloud },
-                                        { id: 'see_3d', label: '3D Tab', desc: 'Visibilità tab 3D Viewer', icon: Box },
-                                        { id: 'see_dbmanager', label: 'DB Manager Tab', desc: 'Visibilità tab DB Manager', icon: Database }
+                                        { id: 'see_rewind', label: 'Rewind Tab', desc: 'VisibilitÃ  tab Mission Rewind', icon: Rewind },
+                                        { id: 'see_production', label: 'Production Tab', desc: 'VisibilitÃ  tab Production Targets', icon: Target },
+                                        { id: 'see_weather', label: 'Weather Tab', desc: 'VisibilitÃ  tab Weather Analytics', icon: Cloud },
+                                        { id: 'see_3d', label: '3D Tab', desc: 'VisibilitÃ  tab 3D Viewer', icon: Box },
+                                        { id: 'see_dbmanager', label: 'DB Manager Tab', desc: 'VisibilitÃ  tab DB Manager', icon: Database }
                                     ].map(p => (
                                         <button 
                                             key={p.id}
@@ -198,7 +198,7 @@ export default function AddUserModal({ onClose, onUserAdded, companies, vessels 
                                 <div className="bg-green-600 rounded-3xl p-6 flex gap-4 border border-green-700 shadow-xl shadow-green-600/20 text-white text-xs font-bold animate-in slide-in-from-top duration-500">
                                     <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0 backdrop-blur-sm border border-white/30"><Anchor size={24} className="text-white" /></div>
                                     <div className="w-full">
-                                        <span className="text-green-50 tracking-wide">Associando un MMSI, l'utente sarà automaticamente vincolato a quella nave nelle notifiche e nei filtri di default.</span>
+                                        <span className="text-green-50 tracking-wide">Associando un MMSI, l'utente sarÃ  automaticamente vincolato a quella nave nelle notifiche e nei filtri di default.</span>
                                         <select 
                                             className="mt-3 block w-full bg-white border-2 border-white rounded-full px-5 py-3 text-sm outline-none text-green-900 font-black shadow-inner cursor-pointer hover:bg-green-50 transition-colors"
                                             value={form.vesselId}

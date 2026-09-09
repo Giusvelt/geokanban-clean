@@ -16,7 +16,7 @@ import { companiesService } from '../services/api/companiesService';
 import { metricsService } from '../services/api/metricsService';
 import SectionHeader from './SectionHeader';
 import UserManagementTab from './UserManagementTab';
-import { parsePart, parseCoordinateLine, toDDM, formatCoords } from '../utils/geoUtils';
+import { parseCoordinateLine, formatCoords } from '../utils/geoUtils';
 import { DatabaseIcon } from './dbmanager/ModalField';
 import {
     VesselsModalFields,
@@ -147,7 +147,6 @@ export default function DBManager() {
         fetchUserStats();
     }, []);
 
-    const fileInputRef = React.useRef(null);
     const modalFileInputRef = React.useRef(null);
     const [coordFormat, setCoordFormat] = useState('DD'); // 'DD' | 'DDM'
     const [coordText, setCoordText] = useState('');
@@ -339,7 +338,7 @@ export default function DBManager() {
                     coords = typeof geo.polygon_coords === 'string'
                         ? JSON.parse(geo.polygon_coords)
                         : (geo.polygon_coords || []);
-                } catch (err) {
+                } catch {
                     coords = [];
                 }
                 setCoordText(formatCoords(coords, coordFormat));

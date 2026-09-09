@@ -11,7 +11,7 @@ const ACTIVITY_TYPES = [
 
 export default function ManualActivityModal({ onClose, onSaved }) {
     const { vessels, geofences, crewVesselId, companyVesselIds } = useFleet();
-    const { activities, selectedMonth, selectedYear } = useOperations();
+    const { activities } = useOperations();
     const { profile } = useConfig();
 
     // 1. Scope allowed vessels strictly based on tenant rules (SOLID)
@@ -66,7 +66,7 @@ export default function ManualActivityModal({ onClose, onSaved }) {
         try {
             const dateObj = new Date(`${ataDate}T${ataHour}:${ataMinute}:00`);
             return isNaN(dateObj.getTime()) ? null : dateObj.toISOString();
-        } catch (e) {
+        } catch {
             return null;
         }
     }, [ataDate, ataHour, ataMinute]);
@@ -76,7 +76,7 @@ export default function ManualActivityModal({ onClose, onSaved }) {
         try {
             const dateObj = new Date(`${atdDate}T${atdHour}:${atdMinute}:00`);
             return isNaN(dateObj.getTime()) ? null : dateObj.toISOString();
-        } catch (e) {
+        } catch {
             return null;
         }
     }, [hasAtd, atdDate, atdHour, atdMinute]);

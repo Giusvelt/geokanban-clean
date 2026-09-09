@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+﻿import React, { useState, useMemo, useEffect } from 'react';
 import { X, Ship, Clock, MapPin, Activity, Check, AlertCircle } from 'lucide-react';
 import { useFleet, useConfig } from '../context/DataContext';
 import { activityService } from '../services/api/activityService';
@@ -87,7 +87,7 @@ export default function EditActivityModal({ activityToEdit, onClose, onSaved }) 
         try {
             const dateObj = new Date(`${ataDate}T${ataHour}:${ataMinute}:00`);
             return isNaN(dateObj.getTime()) ? null : dateObj.toISOString();
-        } catch (e) {
+        } catch {
             return null;
         }
     }, [ataDate, ataHour, ataMinute]);
@@ -97,16 +97,16 @@ export default function EditActivityModal({ activityToEdit, onClose, onSaved }) 
         try {
             const dateObj = new Date(`${atdDate}T${atdHour}:${atdMinute}:00`);
             return isNaN(dateObj.getTime()) ? null : dateObj.toISOString();
-        } catch (e) {
+        } catch {
             return null;
         }
     }, [hasAtd, atdDate, atdHour, atdMinute]);
 
     // Calculate real-time duration
     const durationText = useMemo(() => {
-        if (!startTimeISO) return '—';
+        if (!startTimeISO) return 'â€”';
         if (!hasAtd) return 'In Progress (Active)';
-        if (!endTimeISO) return '—';
+        if (!endTimeISO) return 'â€”';
         const start = new Date(startTimeISO);
         const end = new Date(endTimeISO);
         const diffMs = end - start;
