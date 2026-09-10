@@ -1,5 +1,6 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+﻿import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { Toaster } from 'react-hot-toast';
 import { DataProvider, useFleet, useOperations } from './context/DataContext';
 import { supabase } from './lib/supabase';
 import { useUserProfile } from './hooks/useUserProfile';
@@ -66,7 +67,7 @@ function ActivityDashboard({ onSignOut }) {
     if (!activities) return { aisTotal: 0, aisSubmitted: 0 };
     const filtered = activities.filter(a => {
         const d = new Date(a.startTime);
-        const matchesTime = d.getMonth() === selectedMonth && d.getFullYear() === selectedYear;
+        const matchesTime = d.getMonth() === new Date().getMonth() && d.getFullYear() === new Date().getFullYear();
         if (!matchesTime) return false;
         if (perms.seeCompanyVessels && companyVesselIds && !companyVesselIds.includes(a.vesselId)) return false;
         if (perms.seeOwnVesselOnly && crewVesselId && a.vesselId !== crewVesselId) return false;
@@ -75,7 +76,7 @@ function ActivityDashboard({ onSignOut }) {
     });
     const submitted = filtered.filter(a => ['submitted', 'approved'].includes(a.logbookStatus)).length;
     return { aisTotal: filtered.length, aisSubmitted: submitted };
-  }, [activities, selectedMonth, selectedYear, perms, companyVesselIds, crewVesselId, vesselFilter]);
+  }, [activities, perms, companyVesselIds, crewVesselId, vesselFilter]);
 
   const offHireVessels = React.useMemo(() => {
       if (!schedules) return {};
@@ -160,7 +161,7 @@ function ActivityDashboard({ onSignOut }) {
           <div className="w-10 h-10 lg:w-14 lg:h-14 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30 border border-white/20"><Anchor className="text-white w-6 h-6 lg:w-8 lg:h-8" /></div>
           <div className="flex flex-col">
             <h1 className="font-manrope font-extrabold text-xl lg:text-2xl text-on-surface tracking-tight leading-none mb-1">GeoKanban <span className="text-[10px] font-bold text-primary/40 align-top ml-1">v3.25</span></h1>
-            <p className="text-[10px] lg:text-xs font-black text-primary uppercase tracking-[0.2em] opacity-80 leading-none">Breakwater Fleet Tracker — Genova</p>
+            <p className="text-[10px] lg:text-xs font-black text-primary uppercase tracking-[0.2em] opacity-80 leading-none">Breakwater Fleet Tracker â€” Genova</p>
           </div>
         </div>
         <div className="flex items-center gap-4 lg:gap-6">
@@ -264,5 +265,5 @@ export default function App() {
 
   if (checkingAuth) return <div className="loading-screen"><Anchor size={48} className="spin" /><p>Loading...</p></div>;
   if (!user) return <Suspense fallback={null}><LandingPage onLogin={setUser} /></Suspense>;
-  return <DataProvider><ActivityDashboard onSignOut={() => supabase.auth.signOut()} /></DataProvider>;
+  return <DataProvider><Toaster position="bottom-right" /><ActivityDashboard onSignOut={() => supabase.auth.signOut()} /></DataProvider>;
 }
