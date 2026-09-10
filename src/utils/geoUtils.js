@@ -16,7 +16,7 @@ export const parsePart = (str, isLat) => {
     const cleanStr = str.trim();
 
     // DDM: es. 44° 07.407' N oppure 44 07.407 N
-    const ddmRegex = /(\d+)\s*°?\s*(\d+(?:[\.,]\d+)?)\s*'?\s*([NnSsEeWwOo])/i;
+    const ddmRegex = /(\d+)\s*°?\s*(\d+(?:[.,]\d+)?)\s*'?\s*([NnSsEeWwOo])/i;
     const match = cleanStr.match(ddmRegex);
     if (match) {
         const deg = parseFloat(match[1]);
@@ -49,7 +49,7 @@ export const parseCoordinateLine = (line) => {
     } else if (clean.includes(',') && (clean.match(/,/g) || []).length === 1) {
         parts = clean.split(',');
     } else {
-        const ddmPattern = /\d+\s*°?\s*\d+(?:[\.,]\d+)?\s*'?\s*[NnSsEeWwOo]/gi;
+        const ddmPattern = /\d+\s*°?\s*\d+(?:[.,]\d+)?\s*'?\s*[NnSsEeWwOo]/gi;
         const ddmMatches = clean.match(ddmPattern);
         if (ddmMatches && ddmMatches.length === 2) {
             parts = ddmMatches;

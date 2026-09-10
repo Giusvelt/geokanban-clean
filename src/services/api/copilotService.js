@@ -108,7 +108,7 @@ function extractDateFilterFromQuestion(question) {
   }
 
   // Match "02/07", "2/7", "02/07/2026", ecc.
-  const regexNum = /(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{4}))?/;
+  const regexNum = /(\d{1,2})[/-](\d{1,2})(?:[/-](\d{4}))?/;
   const matchNum = lower.match(regexNum);
   if (matchNum) {
     const day = parseInt(matchNum[1], 10);
