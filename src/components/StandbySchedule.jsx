@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo, useCallback } from 'react';
+﻿import React, { useState, useMemo,  } from 'react';
 import { useFleet, useOperations, useConfig } from '../context/DataContext';
 import { scheduleService } from '../services/api/scheduleService';
 import { Calendar, ChevronLeft, ChevronRight, AlertCircle, Clock, X, Plus, Wind } from 'lucide-react';
@@ -217,7 +217,7 @@ export default function StandbySchedule() {
             await fetchSchedules();
             setSelectedDate(null);
         } catch (error) {
-            console.error('Failed to save standby', error);
+            
             alert(`Error: ${error.message}`);
         } finally {
             setSaving(false);
@@ -244,7 +244,7 @@ export default function StandbySchedule() {
             setShowRangeForm(false);
             setRangeData({ startDate: getTodayStr(), endDate: getTodayStr(), allDay: true, startTime: '08:00', endTime: '17:00', reasonId: '', notes: '' });
         } catch (error) {
-            console.error('Failed to save range standby', error);
+            
             alert(`Error: ${error.message}`);
         } finally {
             setSaving(false);
@@ -263,7 +263,7 @@ export default function StandbySchedule() {
             }
             setSelectedDate(null);
         } catch (error) {
-            console.error('Failed to delete standby', error);
+            
             alert(`Error: ${error.message}`);
         } finally {
             setSaving(false);
@@ -274,7 +274,7 @@ export default function StandbySchedule() {
     const renderCalendarDays = () => {
         const blks = [];
         const isFleetView = !selectedVesselId;
-        for (let i = 0; i < firstDay; i++) {
+        for (let _i = 0; i < firstDay; i++) {
             blks.push(<div key={`empty-${i}`} className="cal-day empty"></div>);
         }
         for (let d = 1; d <= daysInMonth; d++) {

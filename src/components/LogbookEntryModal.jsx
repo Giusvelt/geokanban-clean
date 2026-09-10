@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
     X, Ship, Clock, ShieldCheck, Lock, Anchor, Navigation,
     Package, Fuel, Users, AlertCircle, ChevronDown, ChevronUp, MessageSquare, CalendarDays
@@ -24,8 +24,8 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
 
     const [selectedActivityType, setSelectedActivityType] = useState(activity?.activity || 'Navigation');
 
-    const [navFrom, setNavFrom] = useState('—');
-    const [navTo, setNavTo] = useState('—');
+    const [navFrom, setNavFrom] = useState('â€”');
+    const [navTo, setNavTo] = useState('â€”');
 
     React.useEffect(() => {
         if (activity?.activity === 'Navigation' && activities?.length) {
@@ -37,8 +37,8 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
             if (idx >= 0) {
                 const prev = idx > 0 ? vesselActs[idx - 1].geofence : 'Unknown';
                 const next = idx < vesselActs.length - 1 ? vesselActs[idx + 1].geofence : 'Unknown';
-                setNavFrom(prev && prev !== '—' ? prev : 'Open Sea');
-                setNavTo(next && next !== '—' ? next : 'Open Sea');
+                setNavFrom(prev && prev !== 'â€”' ? prev : 'Open Sea');
+                setNavTo(next && next !== 'â€”' ? next : 'Open Sea');
             }
         }
     }, [activity, activities]);
@@ -167,7 +167,7 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
             }
         } catch (err) {
             if (isAutoSave) setAutoSaveStatus('error');
-            else alert('Error during save: ' + err.message);
+            else toast.error('Error during save: ' + err.message);
         } finally {
             if (!isAutoSave) setSaving(false);
         }
@@ -179,7 +179,7 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
         <div className="lem-overlay" onClick={onClose}>
             <div className="lem-modal" onClick={e => e.stopPropagation()}>
 
-                {/* ── Header ─────────────────────────────────── */}
+                {/* â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <div className="lem-header" style={{ borderTop: `4px solid ${badgeColor}` }}>
                     <div className="lem-header-left">
                         <div className="lem-title-row">
@@ -232,7 +232,7 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
                             {activity?.activity === 'Navigation' ? (
                                 <span><b>FROM:</b> {navFrom} <b>TO:</b> {navTo}</span>
                             ) : (
-                                <span>{activity?.geofence && activity.geofence !== '—' ? activity.geofence : 'Open Sea Navigation'}</span>
+                                <span>{activity?.geofence && activity.geofence !== 'â€”' ? activity.geofence : 'Open Sea Navigation'}</span>
                             )}
                         </div>
                     </div>
@@ -261,10 +261,10 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
                     </div>
                 </div>
 
-                {/* ── Body ───────────────────────────────────── */}
+                {/* â”€â”€ Body â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <div className="lem-body">
 
-                    {/* ① Orari Attività (AIS LOYALTY) */}
+                    {/* â‘  Orari AttivitÃ  (AIS LOYALTY) */}
                     <section className="lem-section">
                         <div className="lem-section-title">
                             <Clock size={15} />
@@ -272,14 +272,14 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
                         </div>
                         <div className="lem-grid-2">
                             <TimeInput 
-                                label="ATA — Arrival" 
+                                label="ATA â€” Arrival" 
                                 value={form.ata} 
                                 onChange={v => set('ata', v)} 
                                 disabled={isSubmitted} 
                                 baseDate={activity?.startTime} 
                             />
                             <TimeInput 
-                                label="ATD — Departure" 
+                                label="ATD â€” Departure" 
                                 value={form.atd} 
                                 onChange={v => set('atd', v)} 
                                 disabled={isSubmitted} 
@@ -288,7 +288,7 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
                         </div>
                     </section>
 
-                    {/* ② Carico Effettivo (Loading / Unloading) */}
+                    {/* â‘¡ Carico Effettivo (Loading / Unloading) */}
                     {needsCargo && (
                         <section className="lem-section lem-highlight-cargo">
                             <div className="lem-section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -298,7 +298,7 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
                                     <span className="lem-required">Required for {activity?.activity}</span>
                                 </div>
                                 <div style={{ fontSize: '11px', background: 'rgba(2, 132, 199, 0.1)', color: '#0284c7', border: '1px solid rgba(2, 132, 199, 0.2)', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
-                                    AIS Draft (In/Out): {activity?.aisStartDraught || '—'} / {activity?.aisEndDraught || '—'}
+                                    AIS Draft (In/Out): {activity?.aisStartDraught || 'â€”'} / {activity?.aisEndDraught || 'â€”'}
                                 </div>
                             </div>
                             <div className="lem-cargo-row">
@@ -325,7 +325,7 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
                         </section>
                     )}
 
-                    {/* ③ Bunker (solo Port Operations) */}
+                    {/* â‘¢ Bunker (solo Port Operations) */}
                     {needsBunker && (
                         <section className="lem-section lem-highlight-bunker">
                             <div className="lem-section-title">
@@ -350,7 +350,7 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
                         </section>
                     )}
 
-                    {/* ④ Servizi Nautici */}
+                    {/* â‘£ Servizi Nautici */}
                     {needsServices && (
                         <>
                             {/* MANOVRA ARRIVO */}
@@ -358,7 +358,7 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
                                 <button className="lem-manovra-toggle" onClick={() => setShowArrival(v => !v)}>
                                     <div className="lem-section-title">
                                         <div className="lem-manovra-dot arrival-dot" />
-                                        <span>ARRIVAL Maneuver in {activity?.geofence !== '—' ? activity.geofence : 'port'}</span>
+                                        <span>ARRIVAL Maneuver in {activity?.geofence !== 'â€”' ? activity.geofence : 'port'}</span>
                                     </div>
                                     {showArrival ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                                 </button>
@@ -397,9 +397,9 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
                                                     <span>Tugs</span>
                                                 </div>
                                                 <label className="lem-field">
-                                                    <span className="lem-label">N° Tugs used</span>
+                                                    <span className="lem-label">NÂ° Tugs used</span>
                                                     <div className="lem-tug-count">
-                                                        <button onClick={() => set('arr_tug_count', Math.max(0, Number(form.arr_tug_count) - 1))} disabled={isSubmitted}>−</button>
+                                                        <button onClick={() => set('arr_tug_count', Math.max(0, Number(form.arr_tug_count) - 1))} disabled={isSubmitted}>âˆ’</button>
                                                         <span>{form.arr_tug_count}</span>
                                                         <button onClick={() => set('arr_tug_count', Number(form.arr_tug_count) + 1)} disabled={isSubmitted}>+</button>
                                                     </div>
@@ -417,7 +417,7 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
                                 <button className="lem-manovra-toggle" onClick={() => setShowDeparture(v => !v)}>
                                     <div className="lem-section-title">
                                         <div className="lem-manovra-dot departure-dot" />
-                                        <span>DEPARTURE Maneuver from {activity?.geofence !== '—' ? activity.geofence : 'port'}</span>
+                                        <span>DEPARTURE Maneuver from {activity?.geofence !== 'â€”' ? activity.geofence : 'port'}</span>
                                     </div>
                                     {showDeparture ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                                 </button>
@@ -456,9 +456,9 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
                                                     <span>Tugs</span>
                                                 </div>
                                                 <label className="lem-field">
-                                                    <span className="lem-label">N° Tugs used</span>
+                                                    <span className="lem-label">NÂ° Tugs used</span>
                                                     <div className="lem-tug-count">
-                                                        <button onClick={() => set('dep_tug_count', Math.max(0, Number(form.dep_tug_count) - 1))} disabled={isSubmitted}>−</button>
+                                                        <button onClick={() => set('dep_tug_count', Math.max(0, Number(form.dep_tug_count) - 1))} disabled={isSubmitted}>âˆ’</button>
                                                         <span>{form.dep_tug_count}</span>
                                                         <button onClick={() => set('dep_tug_count', Number(form.dep_tug_count) + 1)} disabled={isSubmitted}>+</button>
                                                     </div>
@@ -473,7 +473,7 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
                         </>
                     )}
 
-                    {/* ⑤ Note Narrative */}
+                    {/* â‘¤ Note Narrative */}
                     <section className="lem-section">
                         <div className="lem-section-title">
                             <Navigation size={15} />
@@ -489,7 +489,7 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
                         />
                     </section>
 
-                    {/* ⑥ Notifiche/Messaggi */}
+                    {/* â‘¥ Notifiche/Messaggi */}
                     {isSubmitted && entryMeta?.message_snapshot?.length > 0 && (
                         <section className="lem-section lem-messages-section">
                             <div className="lem-section-title">
@@ -512,7 +512,7 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
                         </section>
                     )}
 
-                    {/* ⑦ Hash visivo (solo se certificato) */}
+                    {/* â‘¦ Hash visivo (solo se certificato) */}
                     {isSubmitted && entryMeta?.document_hash && (
                         <section className="lem-section lem-hash-section">
                             <div className="lem-hash-row">
@@ -527,12 +527,12 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
                     )}
                 </div>
 
-                {/* ── Footer ─────────────────────────────────── */}
+                {/* â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 {!isSubmitted && (
                     <div className="lem-footer">
                         <div className="lem-auto-save-container" style={{ flex: 1, fontSize: '12px' }}>
                             {autoSaveStatus === 'saving' && <span style={{ color: '#64748b' }}>Saving draft...</span>}
-                            {autoSaveStatus === 'saved' && <span style={{ color: '#10b981', fontWeight: '500' }}>✓ Draft saved</span>}
+                            {autoSaveStatus === 'saved' && <span style={{ color: '#10b981', fontWeight: '500' }}>âœ“ Draft saved</span>}
                             {autoSaveStatus === 'error' && <span style={{ color: '#ef4444' }}>Error saving draft</span>}
                         </div>
                         <button className="lem-btn-cancel" onClick={onClose} disabled={saving}>Cancel</button>
@@ -550,7 +550,7 @@ export default function LogbookEntryModal({ activity, profile, entryMeta, onClos
                 {isSubmitted && (
                     <div className="lem-footer lem-footer-locked">
                         <Lock size={14} />
-                        <span>Certified Row — Read Only. Visible to Admin in Logbook Registry.</span>
+                        <span>Certified Row â€” Read Only. Visible to Admin in Logbook Registry.</span>
                     </div>
                 )}
             </div>

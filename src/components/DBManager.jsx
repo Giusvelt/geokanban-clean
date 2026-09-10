@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 import { updateUserCustomOverrides, fetchTrackingPeriods, saveTrackingPeriods } from '../services/api/trackingService';
 import * as XLSX from 'xlsx';
 import {
@@ -230,7 +231,7 @@ export default function DBManager() {
             case 'services': result = await deleteService(id); break;
             case 'standby': result = await deleteStandbyReason(id); break;
         }
-        if (result && !result.success) alert('Error: ' + result.error);
+        if (result && !result.success) toast.error('Error: ' + result.error);
     };
 
     const handleSave = async () => {
@@ -239,20 +240,20 @@ export default function DBManager() {
 
         if (activeTab === 'vessels') {
             if (!payload.mmsi || !payload.name) {
-                alert('MMSI and Vessel Name are required.');
+                toast.error('MMSI and Vessel Name are required.');
                 return;
             }
         }
 
         if (activeTab === 'geofences') {
             if (!coordText || !coordText.trim()) {
-                alert('Please enter coordinates for the geofence.');
+                toast.error('Please enter coordinates for the geofence.');
                 return;
             }
             const lines = coordText.split('\n').filter(l => l.trim());
             const coords = lines.map(line => parseCoordinateLine(line)).filter(Boolean);
             if (coords.length < 3) {
-                alert('Error: A geofence requires at least 3 valid vertices to form a polygon. Please check the coordinate format.');
+                toast.error('Error: A geofence requires at least 3 valid vertices.');
                 return;
             }
 
@@ -312,7 +313,7 @@ export default function DBManager() {
                 case 'standby': result = await addStandbyReason(payload); break;
             }
         }
-        if (result && !result.success) { alert('Error: ' + result.error); return; }
+        if (result && !result.success) { toast.error('Error: ' + result.error); return; }
         setShowModal(false);
     };
 
@@ -355,7 +356,7 @@ export default function DBManager() {
             if (modalFileInputRef.current) modalFileInputRef.current.value = "";
         } catch (err) {
             console.error("Modal import failed:", err);
-            alert("Import failed: " + err.message);
+            toast.error("Import failed: " + err.message);
         } finally {
             setImporting(false);
         }
@@ -372,7 +373,7 @@ export default function DBManager() {
         }
 
         if (!Array.isArray(coords) || coords.length === 0) {
-            alert("Errore: la geofence non ha vertici validi.");
+            toast.error("Errore: la geofence non ha vertici validi.");
             return;
         }
 
@@ -611,15 +612,15 @@ export default function DBManager() {
                                                 <td className="px-4 py-2 bg-white font-manrope font-extrabold text-xs text-on-surface">{item.name}</td>
                                                 <td className="px-4 py-2 bg-white text-[10px] font-bold text-on-surface/40 font-mono">{item.mmsi}</td>
                                                 <td className="px-4 py-2 bg-white text-[9px] font-black text-on-surface/20 uppercase italic">{item.vessel_type}</td>
-                                                <td className="px-4 py-2 bg-white text-[10px] font-extrabold text-on-surface/60 font-mono">{item.gross_tonnage ? `${item.gross_tonnage} GT` : '—'}</td>
-                                                <td className="px-4 py-2 bg-white text-[10px] font-bold text-primary truncate max-w-[120px]">{companies?.find(c => c.id === item.company_id)?.name || '—'}</td>
+                                                <td className="px-4 py-2 bg-white text-[10px] font-extrabold text-on-surface/60 font-mono">{item.gross_tonnage ? `${item.gross_tonnage} GT` : 'â€”'}</td>
+                                                <td className="px-4 py-2 bg-white text-[10px] font-bold text-primary truncate max-w-[120px]">{companies?.find(c => c.id === item.company_id)?.name || 'â€”'}</td>
                                             </>
                                         )}
                                         {activeTab === 'companies' && (
                                             <>
                                                 <td className="px-4 py-2 bg-white font-manrope font-extrabold text-xs text-on-surface truncate max-w-[200px]">{item.name}</td>
-                                                <td className="px-4 py-2 bg-white text-[10px] font-bold text-on-surface/40 uppercase font-mono">{item.vat_number || '—'}</td>
-                                                <td className="px-4 py-2 bg-white text-[10px] font-bold text-on-surface/40 italic">{item.city || '—'}</td>
+                                                <td className="px-4 py-2 bg-white text-[10px] font-bold text-on-surface/40 uppercase font-mono">{item.vat_number || 'â€”'}</td>
+                                                <td className="px-4 py-2 bg-white text-[10px] font-bold text-on-surface/40 italic">{item.city || 'â€”'}</td>
                                                 <td className="px-4 py-2 bg-white">
                                                     <div className="flex gap-1">
                                                         {item.is_shipowner && <span className="text-[7px] font-black uppercase bg-primary/10 text-primary px-2 py-0.5 rounded-full">Owner</span>}
@@ -636,7 +637,7 @@ export default function DBManager() {
                                                         {item.nature?.replace('_', ' ')}
                                                     </span>
                                                 </td>
-                                                <td className="px-4 py-2 bg-white text-[10px] font-bold text-on-surface/40 italic">{item.family || '—'}</td>
+                                                <td className="px-4 py-2 bg-white text-[10px] font-bold text-on-surface/40 italic">{item.family || 'â€”'}</td>
                                                 <td className="px-4 py-2 bg-white">
                                                     <div className="flex items-center gap-2 text-[9px] font-black opacity-30">
                                                         <div className="w-2 h-2 rounded-full" style={{ background: item.color }} />
@@ -646,7 +647,7 @@ export default function DBManager() {
                                                 <td className="px-4 py-2 bg-white text-center text-[10px] font-bold text-on-surface/20">
                                                     {(() => {
                                                         const p = typeof item.polygon_coords === 'string' ? JSON.parse(item.polygon_coords) : item.polygon_coords;
-                                                        return Array.isArray(p) ? p.length : '—';
+                                                        return Array.isArray(p) ? p.length : 'â€”';
                                                     })()}
                                                 </td>
                                             </>
@@ -660,21 +661,21 @@ export default function DBManager() {
                                                         {item.category}
                                                     </span>
                                                 </td>
-                                                <td className="px-4 py-2 bg-white text-[10px] font-bold text-on-surface/40 italic">{item.description || '—'}</td>
+                                                <td className="px-4 py-2 bg-white text-[10px] font-bold text-on-surface/40 italic">{item.description || 'â€”'}</td>
                                             </>
                                         )}
                                         {activeTab === 'services' && (
                                             <>
                                                 <td className="px-4 py-2 bg-white text-[10px] font-black text-secondary">{item.code}</td>
                                                 <td className="px-4 py-2 bg-white font-extrabold text-xs uppercase tracking-tight">{item.name}</td>
-                                                <td className="px-4 py-2 bg-white text-[10px] font-bold text-on-surface/60">{item.provider || '—'}</td>
+                                                <td className="px-4 py-2 bg-white text-[10px] font-bold text-on-surface/60">{item.provider || 'â€”'}</td>
                                             </>
                                         )}
                                         {activeTab === 'standby' && (
                                             <>
                                                 <td className="px-4 py-2 bg-white text-[10px] font-black text-secondary">{item.code}</td>
                                                 <td className="px-4 py-2 bg-white font-extrabold text-xs uppercase tracking-tight">{item.name}</td>
-                                                 <td className="px-4 py-2 bg-white text-[10px] font-bold text-on-surface/60">{item.description || '—'}</td>
+                                                 <td className="px-4 py-2 bg-white text-[10px] font-bold text-on-surface/60">{item.description || 'â€”'}</td>
                                             </>
                                         )}
                                         <td className="px-4 py-2 bg-white rounded-r-xl text-right">
