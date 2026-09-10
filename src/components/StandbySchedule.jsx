@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+﻿import React, { useState, useMemo, useCallback } from 'react';
 import { useFleet, useOperations, useConfig } from '../context/DataContext';
 import { scheduleService } from '../services/api/scheduleService';
 import { Calendar, ChevronLeft, ChevronRight, AlertCircle, Clock, X, Plus, Wind } from 'lucide-react';
@@ -33,7 +33,7 @@ export default function StandbySchedule() {
         return (vessels || []).filter(v => v.id === profile?.vesselId && v.tracking_active);
     }, [vessels, perms, companyVesselIds, profile?.vesselId]);
 
-    // Mappa vessel_id → colore stabile
+    // Mappa vessel_id â†’ colore stabile
     const vesselColorMap = useMemo(() => {
         const map = {};
         visibleVessels.forEach((v, i) => { 
@@ -48,7 +48,7 @@ export default function StandbySchedule() {
         perms.seeOwnVesselOnly ? profile?.vesselId : null
     );
 
-    // Se è crew forza la propria nave dopo il caricamento
+    // Se Ã¨ crew forza la propria nave dopo il caricamento
     React.useEffect(() => {
         if (perms.seeOwnVesselOnly && !selectedVesselId && profile?.vesselId) {
             setSelectedVesselId(profile.vesselId);
@@ -85,7 +85,7 @@ export default function StandbySchedule() {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     // Stabile: ricalcolato solo al cambio del giorno (useMemo con deps [])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
     const todayMs = useMemo(() => {
         const d = new Date();
         d.setHours(0, 0, 0, 0);
@@ -134,7 +134,7 @@ export default function StandbySchedule() {
     const weatherStandbyDates = useMemo(() => {
         const dates = new Set();
         
-        // 1. Estrai le vere attività automatiche (isFleetEvent)
+        // 1. Estrai le vere attivitÃ  automatiche (isFleetEvent)
         if (activities && activities.length > 0) {
             const fleetWeatherActivities = activities.filter(a => a.isFleetEvent && a.activity === 'Weather Stand-by');
             fleetWeatherActivities.forEach(a => {
@@ -155,8 +155,8 @@ export default function StandbySchedule() {
         }
 
         // 2. Legacy fallback
-        // Un giorno è "weather fleet" se TUTTE le navi visibili hanno standby WEATHER
-        // Oppure se c'è almeno 1 vessel_standby_schedule con reason WEATHER per 3+ navi
+        // Un giorno Ã¨ "weather fleet" se TUTTE le navi visibili hanno standby WEATHER
+        // Oppure se c'Ã¨ almeno 1 vessel_standby_schedule con reason WEATHER per 3+ navi
         const byDate = fleetSchedulesByDate;
         Object.entries(byDate).forEach(([date, sArr]) => {
             const weatherCount = sArr.filter(s => s.standby_reasons?.code === 'WEATHER' || s.standby_reasons?.code === 'SUD_WTHR').length;
@@ -185,7 +185,7 @@ export default function StandbySchedule() {
         const dateStr = toDateStr(dateClicked);
         setInspectedDateStr(dateStr);
         setSidebarTab('daily');
-        // Edit singolo giorno solo se una nave è selezionata
+        // Edit singolo giorno solo se una nave Ã¨ selezionata
         if (perms.editSchedule && selectedVesselId) {
             setSelectedDate(dateClicked);
             const existing = vesselSchedules[dateStr];
@@ -322,7 +322,7 @@ export default function StandbySchedule() {
                                 {daySchedules.map(s => (
                                     <div
                                         key={s.id}
-                                        title={s.vessels?.name + ' — ' + (s.standby_reasons?.code || '')}
+                                        title={s.vessels?.name + ' â€” ' + (s.standby_reasons?.code || '')}
                                         style={{
                                             width: 14, height: 14,
                                             borderRadius: '50%',
@@ -403,7 +403,7 @@ export default function StandbySchedule() {
                             onChange={(e) => setSelectedVesselId(e.target.value || null)}
                             className="bg-white/50 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-widest text-on-surface outline-none focus:ring-2 ring-primary/20"
                         >
-                            {!perms.seeOwnVesselOnly && <option value="">🌍 All Vessels</option>}
+                            {!perms.seeOwnVesselOnly && <option value="">ðŸŒ All Vessels</option>}
                             {visibleVessels.map(v => (
                                 <option key={v.id} value={v.id}>{v.name}</option>
                             ))}
