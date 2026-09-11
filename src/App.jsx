@@ -7,6 +7,7 @@ import { useUserProfile } from './hooks/useUserProfile';
 import { can, ROLES } from './lib/permissions';
 const LandingPage            = lazy(() => import('./components/LandingPage'));
 const VesselMap               = lazy(() => import('./components/VesselMap'));
+const HistoricalMapWidget   = lazy(() => import('./components/HistoricalMapWidget'));
 const TelemetryStatusIndicator = lazy(() => import('./components/TelemetryStatusIndicator'));
 const WeatherStatusIndicator  = lazy(() => import('./components/WeatherStatusIndicator'));
 import TabLoadingSkeleton from './components/TabLoadingSkeleton';
@@ -18,7 +19,7 @@ const ProductionTargetTab = lazy(() => import('./components/ProductionTargetTab'
 const DBManager = lazy(() => import('./components/DBManager'));
 const LogbookWriterTab = lazy(() => import('./components/LogbookWriterTab'));
 const StandbySchedule = lazy(() => import('./components/StandbySchedule'));
-const RewindMapTab = lazy(() => import('./components/RewindMapTab'));
+const RTFTTab = lazy(() => import('./components/RTFTTab'));
 const ProfileModal = lazy(() => import('./components/ProfileModal'));
 const WeatherAnalyticsTab = lazy(() => import('./components/WeatherAnalyticsTab'));
 const DigitalTwinCopilotTab = lazy(() => import('./components/DigitalTwinCopilotTab'));
@@ -33,7 +34,7 @@ const YardForecastsTab = lazy(() => import('./components/YardForecastsTab'));
 import TelemetryAlertBanner from './components/TelemetryAlertBanner';
 
 
-import { Anchor, Activity, Target, Database, Edit3, Calendar, Rewind, Users, User, MessageSquare, Map as MapIcon, Bell, Cloud, Bot } from 'lucide-react';
+import { Play, Calendar as CalendarIcon, Download, AlertCircle, ArrowLeft, ArrowRight, History, Clock, Database, Map as MapIcon, Anchor, Info, LogOut, CheckCircle2, ChevronRight, Menu, X, Shield, Settings, ShieldCheck, Mail, Phone, BookOpen, Target, Activity, Send, Cloud, Smartphone, TableProperties } from 'lucide-react';
 import './index.css';
 
 function ActivityDashboard({ onSignOut }) {
@@ -105,7 +106,7 @@ function ActivityDashboard({ onSignOut }) {
                 case 'activity': return <VesselActivityTab view="to-submit" {...commonProps} />;
                 case 'logbook-entry': return <VesselActivityTab view="submitted" {...commonProps} />;
                 case 'schedule': return <StandbySchedule />;
-                case 'rewind': return <RewindMapTab />;
+                case 'rtft': return <RTFTTab />;
                 case 'production': return <ProductionTargetTab />;
                 case 'dbmanager': return <DBManager />;
 
@@ -145,7 +146,7 @@ function ActivityDashboard({ onSignOut }) {
           {mobileTab === 'activity' && <MobileCrewActivity tab="all" />}
           {mobileTab === 'logbook-entry' && <MobileCrewActivity tab="submitted" />}
           {mobileTab === 'schedule' && <StandbySchedule />}
-          {mobileTab === 'fleet' && <div className="h-[60vh] rounded-xl overflow-hidden shadow-lg border border-surface-low/50"><VesselMap height="100%" offHireVessels={offHireVessels} /></div>}
+          {mobileTab === 'fleet' && <div className="h-[60vh] rounded-xl overflow-hidden shadow-lg border border-surface-low/50"><HistoricalMapWidget height="100%" /></div>}
           {mobileTab === 'chat' && <MobileOperatorChat profile={profile} />}
           {mobileTab === 'profile' && <MobileCrewProfile />}
         </MobileDashboard>
@@ -189,7 +190,7 @@ function ActivityDashboard({ onSignOut }) {
             </div>
             <div className="rounded-[1.5rem] overflow-hidden border border-surface-low/20">
               <Suspense fallback={<div className="h-[350px] rounded-[1.5rem] bg-slate-100 animate-pulse" />}>
-                <VesselMap height="350px" vesselPositions={vesselPositions} geofences={geofences} offHireVessels={offHireVessels} />
+                <HistoricalMapWidget height="350px" />
               </Suspense>
             </div>
           </div>
@@ -208,7 +209,7 @@ function ActivityDashboard({ onSignOut }) {
               permission: perms.seeSchedule,
               hasNotification: !perms.seeOwnVesselOnly && (schedules || []).some(s => s.is_approved === false || s.is_approved === null)
             },
-            { id: 'rewind', label: 'Rewind', icon: Rewind, permission: perms.seeRewindMap },
+            { id: 'rtft', label: 'RTFT', icon: MapIcon, permission: perms.seeRewindMap },
             { id: 'production', label: 'Production Targets', icon: perms.seeProductionTargets ? Target : null, permission: perms.seeProductionTargets },
             { id: 'weather-analytics', label: 'Weather Analytics', icon: Cloud, permission: perms.seeWeatherAnalytics },
 

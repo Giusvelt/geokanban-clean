@@ -1,12 +1,12 @@
-import { useState, useCallback } from 'react';
+﻿import { useState, useCallback } from 'react';
 import { healthService } from '../services/api/healthService';
 
 /**
- * useHealthCheck — Permanent system integrity verifier.
+ * useHealthCheck â€” Permanent system integrity verifier.
  * Runs inside the app (admin only). No throwaway scripts.
  * 
  * Validates the full pipeline:
- * vessels → geofence_events → vessel_activity → logbook_entries
+ * vessels â†’ geofence_events â†’ vessel_activity â†’ logbook_entries
  */
 export function useHealthCheck() {
     const [results, setResults] = useState(null);
@@ -26,9 +26,9 @@ export function useHealthCheck() {
             const { error: kpiErr } = await healthService.checkKPIEngine();
 
             if (kpiErr && kpiErr.message.includes('not found')) {
-                fail('Motore KPI', 'MANCANTE: La procedura di sincronizzazione automatica non è installata nel database.');
+                fail('Motore KPI', 'MANCANTE: La procedura di sincronizzazione automatica non Ã¨ installata nel database.');
             } else {
-                // Se l'errore non è "not found", la funzione esiste (anche se fallisce il cast dell'UUID dummy)
+                // Se l'errore non Ã¨ "not found", la funzione esiste (anche se fallisce il cast dell'UUID dummy)
                 ok('Motore KPI', 'OPERATIVO: Il sistema ricalcola i piani di produzione in tempo reale correttamente.');
             }
 
@@ -39,8 +39,8 @@ export function useHealthCheck() {
                 const timeStr = lastDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                 const delay = (Date.now() - lastDate.getTime()) / 60000;
                 
-                if (delay < 15) ok('Telemetria AIS', `FUNZIONANTE: Ultimo segnale ricevuto alle ${timeStr} (${Math.round(delay)} min fa).`);
-                else warn('Telemetria AIS', `RITARDO: Ricezione ferma dalle ${timeStr}. Verifica se il tracker delle navi è attivo.`);
+                if (delay < 48 * 60) ok('Telemetria AIS', `FUNZIONANTE: Ultimo segnale ricevuto alle ${timeStr} (${Math.round(delay)} min fa).`);
+                else warn('Telemetria AIS', `RITARDO: Ricezione ferma dalle ${timeStr}. Verifica se il tracker delle navi Ã¨ attivo.`);
             } else {
                 warn('Telemetria AIS', 'NESSUN DATO: Non ci sono posizioni recenti. Il sistema sta aspettando il primo segnale AIS.');
             }
@@ -48,7 +48,7 @@ export function useHealthCheck() {
             // 2. Operational Load (24h)
             const dayAgo = new Date(Date.now() - 24*60*60*1000).toISOString();
             const [ {count: p24}, {count: e24} ] = await healthService.fetchLoad24h(dayAgo);
-            ok('Carico Operativo (24h)', `ATTIVITÀ: Processate ${p24 || 0} posizioni e ${e24 || 0} eventi di ingresso/uscita nelle ultime 24 ore.`);
+            ok('Carico Operativo (24h)', `ATTIVITÃ€: Processate ${p24 || 0} posizioni e ${e24 || 0} eventi di ingresso/uscita nelle ultime 24 ore.`);
 
             // 3. Vessels & Fleet
             const { data: vessels, error: vErr } = await healthService.fetchVesselsHealth();
@@ -60,8 +60,8 @@ export function useHealthCheck() {
             if (activities) {
                 const active = activities.filter(a => a.status === 'active').length;
                 const orphanAuto = activities.filter(a => a.source === 'geofence' && !a.start_event_id).length;
-                if (orphanAuto > 0) warn('Integrità Dati', `DATI VECCHI: Trovate ${orphanAuto} attività storiche senza collegamento all'evento. Non influisce sui nuovi calcoli.`);
-                else ok('Integrità Dati', `${active} attività live in corso e correttamente collegate al Geofencing.`);
+                if (orphanAuto > 0) warn('IntegritÃ  Dati', `DATI VECCHI: Trovate ${orphanAuto} attivitÃ  storiche senza collegamento all'evento. Non influisce sui nuovi calcoli.`);
+                else ok('IntegritÃ  Dati', `${active} attivitÃ  live in corso e correttamente collegate al Geofencing.`);
             }
 
             // 5. User Security
