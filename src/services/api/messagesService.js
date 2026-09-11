@@ -1,7 +1,7 @@
-import { supabase } from '../../lib/supabase';
+﻿import { supabase } from '../../lib/supabase';
 
 /**
- * messagesService.js — SOLID Service Layer (Refactored)
+ * messagesService.js â€” SOLID Service Layer (Refactored)
  * Centralizes ALL activity messaging operations.
  * Used by: ActivityChatModal.jsx, MobileOperatorChat.jsx, VesselActivityTab.jsx
  */
@@ -37,7 +37,7 @@ export const messagesService = {
         if (error) {
             // Fallback without join if FK relationship issue
             if (error.message.includes('relationship')) {
-                console.warn('⚠️ messagesService: FK fallback (no user_profiles join)');
+                console.warn('âš ï¸ messagesService: FK fallback (no user_profiles join)');
                 const { data: fallbackData, error: fbErr } = await supabase
                     .from('activity_messages')
                     .select('*')
@@ -138,5 +138,18 @@ export const messagesService = {
             .limit(30);
         if (error) throw error;
         return data || [];
+    },
+    async fetchMessagesForHook(activityId) {
+        return await supabase
+            .from('activity_messages')
+            .select('*, sender:user_profiles(display_name)')
+            .eq('vessel_activity_id', activityId)
+            .order('created_at', { ascending: true });
+    },
+    async toggleInLogbook(messageId, included) {
+        return await supabase
+            .from('activity_messages')
+            .update({ included_in_logbook: included })
+            .eq('id', messageId);
     }
 };

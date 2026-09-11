@@ -2,7 +2,7 @@
 import { AnimatePresence } from 'framer-motion';
 import { Toaster } from 'react-hot-toast';
 import { DataProvider, useFleet, useOperations } from './context/DataContext';
-import { supabase } from './lib/supabase';
+import { authService } from './services/api/authService';
 import { useUserProfile } from './hooks/useUserProfile';
 import { can, ROLES } from './lib/permissions';
 const LandingPage            = lazy(() => import('./components/LandingPage'));
@@ -249,15 +249,15 @@ export default function App() {
         return;
       }
 
-      const { data: profile } = await supabase.from('user_profiles').select('role').eq('id', session.user.id).single();
+      const { data: profile } = await authService.getProfile(session.user.id);
       const role = profile?.role || 'crew';
 
       setUser({ id: session.user.id, email: session.user.email, role: role });
       setCheckingAuth(false);
     };
 
-    supabase.auth.getSession().then(({ data: { session } }) => handleSession(session));
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    authService.getSession().then(({ data: { session } }) => handleSession(session));
+    const { data: { subscription } } = authService.onAuthStateChange((_event, session) => {
       if (!session?.user || _event === 'SIGNED_OUT') setUser(null);
     });
     return () => subscription.unsubscribe();
@@ -265,5 +265,5 @@ export default function App() {
 
   if (checkingAuth) return <div className="loading-screen"><Anchor size={48} className="spin" /><p>Loading...</p></div>;
   if (!user) return <Suspense fallback={null}><LandingPage onLogin={setUser} /></Suspense>;
-  return <DataProvider><Toaster position="bottom-right" /><ActivityDashboard onSignOut={() => supabase.auth.signOut()} /></DataProvider>;
+  return <DataProvider><Toaster position="bottom-right" /><ActivityDashboard onSignOut={() => authService.signOut()} /></DataProvider>;
 }

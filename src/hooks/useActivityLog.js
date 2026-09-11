@@ -1,13 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
+﻿import { useState, useEffect, useCallback } from 'react';
+import { activityService } from '../services/api/activityService';
 import { useConfig } from '../context/DataContext';
 import { weatherService } from '../services/api/weatherService';
 
 /**
- * useActivityLog V3.2 — Reads from vessel_activity (materialized)
+ * useActivityLog V3.2 â€” Reads from vessel_activity (materialized)
  * instead of recalculating from geofence_events.
  *
- * @param {string|null} vesselId — If provided, filters for a single vessel (crew mode)
+ * @param {string|null} vesselId â€” If provided, filters for a single vessel (crew mode)
  */
 export function useActivityLog(vesselId = null) {
     const { profile } = useConfig();
@@ -19,38 +19,9 @@ export function useActivityLog(vesselId = null) {
         setLoading(true);
 
         try {
-            let query = supabase
-                .from('vessel_activity')
-                .select(`
-                    id,
-                    vessel_id,
-                    activity_type,
-                    geofence_id,
-                    start_time,
-                    end_time,
-                    duration_minutes,
-                    source,
-                    status,
-                    export_flag,
-                    vessels ( name, mmsi ),
-                    geofences!vessel_activity_geofence_id_fkey ( name, nature ),
-                    logbook_entries ( status, structured_fields ),
-                    activity_messages ( id, is_read, sender_role )
-                `)
-                .order('start_time', { ascending: false });
+            const { data, error } = await activityService.fetchActivityLog(vesselId);
 
-            // Crew filter: only their vessel
-            if (profile?.role === 'crew' && !vesselId) {
-                setActivities([]);
-                setLoading(false);
-                return;
-            }
-
-            if (vesselId) {
-                query = query.eq('vessel_id', vesselId);
-            }
-
-            const { data, error } = await query;
+            
 
             if (error) throw error;
 
@@ -65,10 +36,10 @@ export function useActivityLog(vesselId = null) {
 
             // Map to format expected by VesselActivityTab
             const mapped = (data || []).map((row, idx, arr) => {
-                let geofenceName = row.geofences?.name || '—';
+                let geofenceName = row.geofences?.name || 'â€”';
 
                 if (row.activity_type === 'Navigation') {
-                    // Cerca la destinazione (l'attività cronologicamente successiva, ovvero quella prima di noi nell'array DESC)
+                    // Cerca la destinazione (l'attivitÃ  cronologicamente successiva, ovvero quella prima di noi nell'array DESC)
                     let destGeo = null;
                     for (let i = idx - 1; i >= 0; i--) {
                         if (arr[i].vessel_id === row.vessel_id && arr[i].geofences?.name) {
@@ -77,7 +48,7 @@ export function useActivityLog(vesselId = null) {
                         }
                     }
 
-                    // Cerca la partenza (l'attività cronologicamente precedente, ovvero quella dopo di noi nell'array DESC)
+                    // Cerca la partenza (l'attivitÃ  cronologicamente precedente, ovvero quella dopo di noi nell'array DESC)
                     let origGeo = null;
                     for (let i = idx + 1; i < arr.length; i++) {
                         if (arr[i].vessel_id === row.vessel_id && arr[i].geofences?.name) {
@@ -87,11 +58,11 @@ export function useActivityLog(vesselId = null) {
                     }
 
                     if (origGeo && destGeo) {
-                        geofenceName = `${origGeo} ➔ ${destGeo}`;
+                        geofenceName = `${origGeo} âž” ${destGeo}`;
                     } else if (destGeo) {
-                        geofenceName = `➔ ${destGeo}`;
+                        geofenceName = `âž” ${destGeo}`;
                     } else if (origGeo) {
-                        geofenceName = `${origGeo} ➔ —`;
+                        geofenceName = `${origGeo} âž” â€”`;
                     } else {
                         geofenceName = 'Navigation';
                     }

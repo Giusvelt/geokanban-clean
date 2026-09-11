@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+﻿import React, { useState, useEffect } from 'react';
+import { authService } from '../services/api/authService';
 import { Anchor, Lock, AlertCircle, User, Eye, EyeOff, ChevronDown, Satellite, Ship, Cloud, Database as DbIcon, Globe, BarChart3, Shield, Cpu, Layers, Box, Mail, ArrowRight, Activity, Target, MapPin } from 'lucide-react';
 import MFAVerifyStep from './MFAVerifyStep';
 import MFAEnrollModal from './MFAEnrollModal';
 import '../landing.css';
 
 /**
- * GeoKanban Landing Page — Blueprint-inspired showcase + Login
+ * GeoKanban Landing Page â€” Blueprint-inspired showcase + Login
  * Replaces the old minimal Login component with a full-page experience.
  */
 export default function LandingPage({ onLogin }) {
@@ -25,20 +25,20 @@ export default function LandingPage({ onLogin }) {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // ── Auth Logic (preserved from Login.jsx) ──
+    // â”€â”€ Auth Logic (preserved from Login.jsx) â”€â”€
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
         setLoading(true);
         try {
-            const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
+            const { data, error: authError } = await authService.signIn({ email, password });
             if (authError) { setError(authError.message); setLoading(false); return; }
             if (!data?.user) { setError('Login failed. Please try again.'); setLoading(false); return; }
 
-            const { data: profile } = await supabase.from('user_profiles').select('is_blocked, role').eq('id', data.user.id).single();
-            if (profile?.is_blocked) { await supabase.auth.signOut(); setError('Account sospeso. Contatta l\'amministratore.'); setLoading(false); return; }
+            const { data: profile } = await authService.getProfile(data.user.id);
+            if (profile?.is_blocked) { await authService.signOut(); setError('Account sospeso. Contatta l\'amministratore.'); setLoading(false); return; }
 
-            const { data: factorsData } = await supabase.auth.mfa.listFactors();
+            const { data: factorsData } = await authService.mfa.listFactors();
             const hasTotp = factorsData?.totp?.length > 0;
             if (hasTotp) { setStep('mfa-verify'); }
             else if (profile?.role === 'operation' || profile?.role === 'operation_admin' || profile?.role === 'crew_admin') { setStep('mfa-enroll'); }
@@ -51,13 +51,13 @@ export default function LandingPage({ onLogin }) {
         onLogin({ id: user.id, email: user.email, name: user.user_metadata?.name || user.email.split('@')[0], role: user.user_metadata?.role || 'admin' });
     };
 
-    const handleMFAVerified = async () => { const { data: { user } } = await supabase.auth.getUser(); completeLogin(user); };
-    const handleBack = async () => { await supabase.auth.signOut(); setStep('credentials'); setError(''); };
+    const handleMFAVerified = async () => { const { data: { user } } = await authService.getUser(); completeLogin(user); };
+    const handleBack = async () => { await authService.signOut(); setStep('credentials'); setError(''); };
 
     if (step === 'mfa-verify') return <MFAVerifyStep onVerified={handleMFAVerified} onBack={handleBack} />;
-    if (step === 'mfa-enroll') return <MFAEnrollModal canSkip={false} onEnrolled={async () => { const { data: { user } } = await supabase.auth.getUser(); completeLogin(user); }} />;
+    if (step === 'mfa-enroll') return <MFAEnrollModal canSkip={false} onEnrolled={async () => { const { data: { user } } = await authService.getUser(); completeLogin(user); }} />;
 
-    // ── Feature Cards Data ──
+    // â”€â”€ Feature Cards Data â”€â”€
     const features = [
         { icon: <Ship size={24} />, title: "Live Fleet Tracking", desc: "Real-time AIS vessel tracking with geofencing, automatic activity detection and operational status monitoring." },
         { icon: <Box size={24} />, title: "3D Asset Viewer", desc: "Potree-based point cloud visualization for subsea infrastructure inspection, bathymetric surveys and structural monitoring." },
@@ -76,17 +76,17 @@ export default function LandingPage({ onLogin }) {
     ];
 
     const systemLayers = [
-        { label: "Decision Layer", desc: "Strategy & Governance · Human / AI Collaboration", color: "#60a5fa" },
-        { label: "Intelligence Layer", desc: "Analytics & Insights · AI / Machine Learning", color: "#38bdf8" },
-        { label: "Information Layer", desc: "Data Models & Context · Semantic Integration", color: "#22d3ee" },
-        { label: "Data Layer", desc: "Acquisition & Storage · Raw Data Streams", color: "#2dd4bf" },
+        { label: "Decision Layer", desc: "Strategy & Governance Â· Human / AI Collaboration", color: "#60a5fa" },
+        { label: "Intelligence Layer", desc: "Analytics & Insights Â· AI / Machine Learning", color: "#38bdf8" },
+        { label: "Information Layer", desc: "Data Models & Context Â· Semantic Integration", color: "#22d3ee" },
+        { label: "Data Layer", desc: "Acquisition & Storage Â· Raw Data Streams", color: "#2dd4bf" },
     ];
 
     return (
         <div className="landing-page">
-            {/* ═══════════════════════════════════════════════════
+            {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                 NAVIGATION BAR (Fixed)
-            ═══════════════════════════════════════════════════ */}
+            â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
             <nav className={`landing-nav ${scrollY > 50 ? 'landing-nav--scrolled' : ''}`}>
                 <div className="landing-nav__inner">
                     <div className="landing-nav__brand">
@@ -113,9 +113,9 @@ export default function LandingPage({ onLogin }) {
                 </div>
             </nav>
 
-            {/* ═══════════════════════════════════════════════════
+            {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                 LOGIN DROPDOWN
-            ═══════════════════════════════════════════════════ */}
+            â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
             {showLogin && (
                 <div className="landing-login-overlay" onClick={() => setShowLogin(false)}>
                     <div className="landing-login-panel" onClick={e => e.stopPropagation()}>
@@ -129,7 +129,7 @@ export default function LandingPage({ onLogin }) {
                             </div>
                             <div className="landing-input-group">
                                 <Lock size={16} className="landing-input-icon" />
-                                <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••••••" required />
+                                <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" required />
                                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="landing-eye-btn">
                                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                 </button>
@@ -147,16 +147,16 @@ export default function LandingPage({ onLogin }) {
                 </div>
             )}
 
-            {/* ═══════════════════════════════════════════════════
+            {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                 HERO SECTION
-            ═══════════════════════════════════════════════════ */}
+            â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
             <section className="landing-hero">
                 <div className="landing-hero__grid-bg" />
                 <div className="landing-hero__propeller" style={{ transform: `rotate(${scrollY * 0.05}deg)` }}>
                     <img src="/landing/propeller_hero.png" alt="" />
                 </div>
                 <div className="landing-hero__content">
-                    <div className="landing-hero__badge">Maritime Digital Twin Platform — T+1 Certified Historical Mode</div>
+                    <div className="landing-hero__badge">Maritime Digital Twin Platform â€” T+1 Certified Historical Mode</div>
                     <h1 className="landing-hero__title">
                         Propelling the Future of<br />
                         <span className="landing-hero__title--accent">Harbor Operations</span>
@@ -180,9 +180,9 @@ export default function LandingPage({ onLogin }) {
                 </div>
             </section>
 
-            {/* ═══════════════════════════════════════════════════
+            {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                 INPUT STREAMS BAR
-            ═══════════════════════════════════════════════════ */}
+            â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
             <section className="landing-streams">
                 <div className="landing-streams__inner">
                     {[
@@ -200,9 +200,9 @@ export default function LandingPage({ onLogin }) {
                 </div>
             </section>
 
-            {/* ═══════════════════════════════════════════════════
+            {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                 FEATURES GRID
-            ═══════════════════════════════════════════════════ */}
+            â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
             <section id="features" className="landing-section">
                 <div className="landing-section__inner">
                     <div className="landing-section__header">
@@ -222,9 +222,9 @@ export default function LandingPage({ onLogin }) {
                 </div>
             </section>
 
-            {/* ═══════════════════════════════════════════════════
+            {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                 ARCHITECTURE SECTION
-            ═══════════════════════════════════════════════════ */}
+            â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
             <section id="architecture" className="landing-section landing-section--dark">
                 <div className="landing-section__inner">
                     <div className="landing-section__header">
@@ -233,7 +233,7 @@ export default function LandingPage({ onLogin }) {
                         <p className="landing-section__desc">A layered architecture designed for scalability, interoperability and continuous evolution.</p>
                     </div>
 
-                    {/* Architecture Diagram — 3 Core Pillars */}
+                    {/* Architecture Diagram â€” 3 Core Pillars */}
                     <div className="landing-arch-pillars">
                         <div className="landing-arch-pillar">
                             <div className="landing-arch-pillar__icon"><DbIcon size={28} /></div>
@@ -248,7 +248,7 @@ export default function LandingPage({ onLogin }) {
                         <div className="landing-arch-pillar landing-arch-pillar--center">
                             <div className="landing-arch-pillar__icon landing-arch-pillar__icon--primary"><Cpu size={28} /></div>
                             <h4>Integration Core</h4>
-                            <span className="landing-arch-pillar__sub">Data · Context · AI</span>
+                            <span className="landing-arch-pillar__sub">Data Â· Context Â· AI</span>
                         </div>
                         <div className="landing-arch-pillar">
                             <div className="landing-arch-pillar__icon"><BarChart3 size={28} /></div>
@@ -280,9 +280,9 @@ export default function LandingPage({ onLogin }) {
                 </div>
             </section>
 
-            {/* ═══════════════════════════════════════════════════
+            {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                 PRINCIPLES
-            ═══════════════════════════════════════════════════ */}
+            â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
             <section className="landing-section">
                 <div className="landing-section__inner">
                     <div className="landing-section__header">
@@ -301,9 +301,9 @@ export default function LandingPage({ onLogin }) {
                 </div>
             </section>
 
-            {/* ═══════════════════════════════════════════════════
+            {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                 OUTPUTS / RESULTS BAR
-            ═══════════════════════════════════════════════════ */}
+            â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
             <section className="landing-outputs">
                 <div className="landing-outputs__inner">
                     {["Situational Awareness", "Smart Decisions", "Optimized Operations", "Risk Mitigation", "Sustainable Harbors"].map((o, i) => (
@@ -312,9 +312,9 @@ export default function LandingPage({ onLogin }) {
                 </div>
             </section>
 
-            {/* ═══════════════════════════════════════════════════
+            {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                 CONTACT + FOOTER
-            ═══════════════════════════════════════════════════ */}
+            â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
             <section id="contact" className="landing-section landing-section--dark landing-section--contact">
                 <div className="landing-section__inner">
                     <div className="landing-contact">
@@ -346,7 +346,7 @@ export default function LandingPage({ onLogin }) {
                         <span>GeoKanban V3</span>
                     </div>
                     <p className="landing-footer__copy">
-                        © {new Date().getFullYear()} Giusvelt · Precision Engineering
+                        Â© {new Date().getFullYear()} Giusvelt Â· Precision Engineering
                     </p>
                     <p className="landing-footer__tagline">
                         One Platform. Connecting Data, Space and Operations for Smarter Harbors.

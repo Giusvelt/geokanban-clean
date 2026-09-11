@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+﻿import { useState, useEffect } from 'react';
+import { logbookService } from '../services/api/logbookService';
 
 export function useServices() {
     const [services, setServices] = useState([]);
@@ -7,30 +7,28 @@ export function useServices() {
 
     const fetchServices = async () => {
         setLoading(true);
-        const { data, error } = await supabase
-            .from('services')
-            .select('*')
+        const { data, error } = await logbookService.fetchServicesCatalog()
             .order('code');
         if (!error && data) setServices(data);
         setLoading(false);
     };
 
     const addService = async (item) => {
-        const { data, error } = await supabase.from('services').insert(item).select().single();
+        const { data, error } = await logbookService.insertServiceCatalogItem(item);
         if (error) return { success: false, error: error.message };
         setServices(prev => [...prev, data]);
         return { success: true, data };
     };
 
     const updateService = async (id, updates) => {
-        const { data, error } = await supabase.from('services').update(updates).eq('id', id).select().single();
+        const { data, error } = await logbookService.updateServiceCatalogItem(id, updates);
         if (error) return { success: false, error: error.message };
         setServices(prev => prev.map(s => s.id === id ? data : s));
         return { success: true, data };
     };
 
     const deleteService = async (id) => {
-        const { error } = await supabase.from('services').delete().eq('id', id);
+        const { error } = await logbookService.deleteServiceCatalogItem(id);
         if (error) return { success: false, error: error.message };
         setServices(prev => prev.filter(s => s.id !== id));
         return { success: true };

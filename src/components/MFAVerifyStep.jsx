@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { supabase } from '../lib/supabase';
+﻿import React, { useState } from 'react';
+import { authService } from '../services/api/authService';
 import { ShieldCheck, AlertCircle, Loader, ChevronLeft } from 'lucide-react';
 
 /**
- * MFAVerifyStep — Step 2 del login TOTP
+ * MFAVerifyStep â€” Step 2 del login TOTP
  * Mostrato dopo signInWithPassword quando Supabase richiede MFA.
  */
 export default function MFAVerifyStep({ onVerified, onBack }) {
@@ -21,20 +21,20 @@ export default function MFAVerifyStep({ onVerified, onBack }) {
         setLoading(true);
         try {
             // 1. Get enrolled TOTP factors
-            const { data: factorsData, error: factorsErr } = await supabase.auth.mfa.listFactors();
+            const { data: factorsData, error: factorsErr } = await authService.mfa.listFactors();
             if (factorsErr) throw factorsErr;
 
             const totpFactor = factorsData?.totp?.[0];
             if (!totpFactor) throw new Error('No TOTP factor enrolled. Please contact your administrator.');
 
             // 2. Create challenge
-            const { data: challengeData, error: challengeErr } = await supabase.auth.mfa.challenge({
+            const { data: challengeData, error: challengeErr } = await authService.mfa.challenge({
                 factorId: totpFactor.id
             });
             if (challengeErr) throw challengeErr;
 
             // 3. Verify code
-            const { error: verifyErr } = await supabase.auth.mfa.verify({
+            const { error: verifyErr } = await authService.mfa.verify({
                 factorId: totpFactor.id,
                 challengeId: challengeData.id,
                 code: code.trim()

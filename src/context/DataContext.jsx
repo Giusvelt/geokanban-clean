@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useMemo } from 'react';
-import { supabase } from '../lib/supabase';
+﻿import React, { createContext, useContext, useEffect, useMemo } from 'react';
+import { pubsubService } from '../services/api/pubsubService';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { useGeofenceStore } from '../store/useGeofenceStore';
 import { useVesselStore } from '../store/useVesselStore';
@@ -7,15 +7,15 @@ import { useActivityStore } from '../store/useActivityStore';
 import { useConfigStore } from '../store/useConfigStore';
 import { useProjectStore } from '../store/useProjectStore';
 
-// ─── 3 Context slice separati ────────────────────────────────────────────────
+// â”€â”€â”€ 3 Context slice separati â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Dividere il god-context in slice indipendenti riduce i re-render:
-// - un aggiornamento AIS  → solo consumer di useFleet() re-renderizzano
-// - un logbook certificato → solo consumer di useOperations() re-renderizzano
-// - uno schedule approvato → solo consumer di useConfig() re-renderizzano
+// - un aggiornamento AIS  â†’ solo consumer di useFleet() re-renderizzano
+// - un logbook certificato â†’ solo consumer di useOperations() re-renderizzano
+// - uno schedule approvato â†’ solo consumer di useConfig() re-renderizzano
 //
 // useData() rimane disponibile come alias backward-compat per i 21 consumer
-// esistenti — zero breaking changes, migrazione incrementale possibile.
-// ─────────────────────────────────────────────────────────────────────────────
+// esistenti â€” zero breaking changes, migrazione incrementale possibile.
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const FleetContext      = createContext();
 const OperationsContext = createContext();
@@ -24,14 +24,14 @@ const ConfigContext     = createContext();
 /** Vessels, posizioni live, tracking realtime, ID equipaggio/compagnia. */
 export const useFleet      = () => useContext(FleetContext);
 
-/** Attività, production plans, geofence, filtri mese/anno, KPI. */
+/** AttivitÃ , production plans, geofence, filtri mese/anno, KPI. */
 export const useOperations = () => useContext(OperationsContext);
 
 /** Profilo utente, standby reasons, schedule, permessi. */
 export const useConfig     = () => useContext(ConfigContext);
 
 /**
- * Hook di compatibilità backward — aggrega i 3 slice.
+ * Hook di compatibilitÃ  backward â€” aggrega i 3 slice.
  * I 21 componenti esistenti continuano a funzionare senza modifiche.
  * @deprecated Preferire useFleet() / useOperations() / useConfig() per
  *             componenti nuovi o refactoring futuri (riduce i re-render).
@@ -42,11 +42,11 @@ export const useData = () => ({
     ...useConfig(),
 });
 
-// ─── DataProvider — unico orchestratore ──────────────────────────────────────
+// â”€â”€â”€ DataProvider â€” unico orchestratore â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function DataProvider({ children }) {
     const { profile } = useUserProfile();
 
-    // ── Zustand store bindings ──────────────────────────────────────────────
+    // â”€â”€ Zustand store bindings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const {
         vessels, vesselPositions, loading: vesselsLoading,
         fetchVessels, addVessel, updateVessel, deleteVessel,
@@ -73,7 +73,7 @@ export function DataProvider({ children }) {
 
     const { fetchProjects } = useProjectStore();
 
-    // ── Computed: ID nave dell'utente crew ──────────────────────────────────
+    // â”€â”€ Computed: ID nave dell'utente crew â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const crewVesselId = useMemo(() => {
         if (!profile || !vessels?.length) return null;
         if (profile.role !== 'crew') return null;
@@ -92,7 +92,7 @@ export function DataProvider({ children }) {
         return vessels.filter(v => v.company_id === profile.companyId).map(v => v.id);
     }, [profile, vessels]);
 
-    // ── Initial data fetch ──────────────────────────────────────────────────
+    // â”€â”€ Initial data fetch â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     useEffect(() => {
         fetchProjects(profile?.id, profile?.role);
         fetchVessels();
@@ -102,7 +102,7 @@ export function DataProvider({ children }) {
         fetchPlans();
     }, [fetchProjects, profile?.id, profile?.role, fetchVessels, fetchGeofences, fetchReasons, fetchSchedules, fetchPlans]);
 
-    // ── Fetch activities (dipende da role + vessel scope) ───────────────────
+    // â”€â”€ Fetch activities (dipende da role + vessel scope) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     useEffect(() => {
         if (!profile) return;
         let targetId = null;
@@ -116,32 +116,27 @@ export function DataProvider({ children }) {
         fetchActivities(targetId, profile.role, selectedMonth, selectedYear);
     }, [profile, crewVesselId, companyVesselIds, fetchActivities, selectedMonth, selectedYear]);
 
-    // ── Realtime KPI: logbook certificato / attività inserita ───────────────
+    // â”€â”€ Realtime KPI: logbook certificato / attivitÃ  inserita â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     useEffect(() => {
         let targetId = null;
         if (profile?.role === 'crew')       targetId = crewVesselId;
         else if (profile?.role === 'crew_admin') targetId = companyVesselIds;
 
-        const channel = supabase
-            .channel('kpi-realtime')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'logbook_entries' },
-                () => {
-                    fetchActivities(targetId, profile?.role);
-                    fetchPlans(); // Sync KPI Admin
-                }
-            )
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'vessel_activity' },
-                () => { fetchActivities(targetId, profile?.role); }
-            )
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'production_plans' },
-                () => { fetchPlans(); }
-            )
-            .subscribe();
+                const channel = pubsubService.subscribeGlobal('kpi-realtime', { event: '*', schema: 'public' }, (payload) => {
+            if (payload.table === 'logbook_entries') {
+                fetchActivities(targetId, profile?.role);
+                fetchPlans(); // Sync KPI Admin
+            } else if (payload.table === 'vessel_activity' && payload.eventType === 'INSERT') {
+                fetchActivities(targetId, profile?.role);
+            } else if (payload.table === 'production_plans') {
+                fetchPlans();
+            }
+        });
 
-        return () => supabase.removeChannel(channel);
+        return () => pubsubService.unsubscribe(channel);
     }, [profile, crewVesselId, companyVesselIds, fetchActivities, fetchPlans]);
 
-    // ── Realtime Tracking: DB-driven, con recovery da sleep/offline ─────────
+    // â”€â”€ Realtime Tracking: DB-driven, con recovery da sleep/offline â”€â”€â”€â”€â”€â”€â”€â”€â”€
     useEffect(() => {
         if (!vessels?.length || !profile) return;
 
@@ -178,12 +173,12 @@ export function DataProvider({ children }) {
             clearInterval(interval);
             window.removeEventListener('visibilitychange', handleWakeUp);
             window.removeEventListener('online', handleWakeUp);
-            if (channel) supabase.removeChannel(channel);
+            if (channel) pubsubService.unsubscribe(channel);
         };
     }, [vessels, crewVesselId, profile?.role, profile?.companyId,
         loadHistoricalPositions, subscribeToTracking, fetchActivities, fetchVessels, companyVesselIds]);
 
-    // ── Slice 1: Fleet ───────────────────────────────────────────────────────
+    // â”€â”€ Slice 1: Fleet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const fleetValue = useMemo(() => ({
         vessels,
         vesselPositions,
@@ -202,7 +197,7 @@ export function DataProvider({ children }) {
         loadHistoricalPositions, subscribeToTracking,
     ]);
 
-    // ── Slice 2: Operations ──────────────────────────────────────────────────
+    // â”€â”€ Slice 2: Operations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const operationsValue = useMemo(() => ({
         activities,
         productionPlans,
@@ -229,7 +224,7 @@ export function DataProvider({ children }) {
         fetchGeofences, addGeofence, updateGeofence, deleteGeofence,
     ]);
 
-    // ── Slice 3: Config ──────────────────────────────────────────────────────
+    // â”€â”€ Slice 3: Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const configValue = useMemo(() => ({
         profile,
         standbyReasons,

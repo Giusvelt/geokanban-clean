@@ -1,9 +1,6 @@
-import { useState, useCallback, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+﻿import { useState, useCallback, useEffect } from 'react';
+import { logbookService } from '../services/api/logbookService';
 
-/**
- * Hook to manage a single logbook entry for a vessel activity.
- */
 export function useLogbook(activityId) {
     const [entry, setEntry] = useState(null);
     const [services, setServices] = useState([]);
@@ -14,22 +11,12 @@ export function useLogbook(activityId) {
         if (!activityId) return;
         setLoading(true);
         try {
-            // Get logbook entry
-            const { data, error: e1 } = await supabase
-                .from('logbook_entries')
-                .select('*, vessels(name, mmsi)')
-                .eq('vessel_activity_id', activityId)
-                .maybeSingle();
-
+            const { data, error: e1 } = await logbookService.fetchLogbookByActivity(activityId);
             if (e1) throw e1;
 
             if (data) {
                 setEntry(data);
-                // Get services
-                const { data: svc, error: e2 } = await supabase
-                    .from('logbook_services')
-                    .select('*, services(name, code, provider)')
-                    .eq('logbook_entry_id', data.id);
+                const { data: svc, error: e2 } = await logbookService.fetchLogbookServices(data.id);
                 if (e2) throw e2;
                 setServices(svc || []);
             } else {
@@ -50,10 +37,7 @@ export function useLogbook(activityId) {
     const saveNarrative = async (text) => {
         if (!entry) return { success: false, error: 'No entry' };
         try {
-            const { error } = await supabase
-                .from('logbook_entries')
-                .update({ narrative_text: text, updated_at: new Date() })
-                .eq('id', entry.id);
+            const { error } = await logbookService.updateLogbookNarrative(entry.id, text);
             if (error) throw error;
             await fetchLogbook();
             return { success: true };
@@ -65,10 +49,7 @@ export function useLogbook(activityId) {
     const submitLogbook = async () => {
         if (!entry) return { success: false, error: 'No entry' };
         try {
-            const { error } = await supabase
-                .from('logbook_entries')
-                .update({ status: 'submitted' })
-                .eq('id', entry.id);
+            const { error } = await logbookService.submitLogbookEntry(entry.id);
             if (error) throw error;
             await fetchLogbook();
             return { success: true };
@@ -80,13 +61,7 @@ export function useLogbook(activityId) {
     const addService = async (serviceId, qty = 1) => {
         if (!entry) return { success: false, error: 'No entry' };
         try {
-            const { error } = await supabase
-                .from('logbook_services')
-                .insert({
-                    logbook_entry_id: entry.id,
-                    service_id: serviceId,
-                    quantity: qty
-                });
+            const { error } = await logbookService.addLogbookService(entry.id, serviceId, qty, null, null, null);
             if (error) throw error;
             await fetchLogbook();
             return { success: true };
@@ -97,10 +72,7 @@ export function useLogbook(activityId) {
 
     const removeService = async (svcEntryId) => {
         try {
-            const { error } = await supabase
-                .from('logbook_services')
-                .delete()
-                .eq('id', svcEntryId);
+            const { error } = await logbookService.removeLogbookService(svcEntryId);
             if (error) throw error;
             await fetchLogbook();
             return { success: true };
@@ -111,10 +83,7 @@ export function useLogbook(activityId) {
 
     const updateService = async (svcEntryId, updates) => {
         try {
-            const { error } = await supabase
-                .from('logbook_services')
-                .update(updates)
-                .eq('id', svcEntryId);
+            const { error } = await logbookService.updateLogbookService(svcEntryId, updates);
             if (error) throw error;
             await fetchLogbook();
             return { success: true };

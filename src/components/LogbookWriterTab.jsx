@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import * as XLSX from 'xlsx';
 import { useFleet, useOperations, useConfig } from '../context/DataContext';
-import { supabase } from '../lib/supabase';
+import { logbookService } from '../services/api/logbookService';
 import {
     Ship, Clock, Check, RefreshCw,
     Edit3, ShieldCheck, Lock, AlertCircle, Download, PenLine, MessageSquare,
@@ -46,7 +46,7 @@ export default function LogbookWriterTab() {
 
         const formattedAISDate = lastAISUpdate.getTime() > 0
             ? lastAISUpdate.toLocaleString('en-GB')
-            : '—';
+            : 'â€”';
 
         const exportCount = Number(localStorage.getItem('gk_logbook_export_count') || 0) + 1;
         localStorage.setItem('gk_logbook_export_count', exportCount);
@@ -67,8 +67,8 @@ export default function LogbookWriterTab() {
                 a.geofence,
                 a.startTime ? new Date(a.startTime).toLocaleString('en-GB') : '',
                 a.endTime ? new Date(a.endTime).toLocaleString('en-GB') : '',
-                a.aisStartDraught || '—',
-                a.aisEndDraught || '—',
+                a.aisStartDraught || 'â€”',
+                a.aisEndDraught || 'â€”',
                 p?.start_time ? new Date(p.start_time).toLocaleString('en-GB') : '',
                 p?.end_time ? new Date(p.end_time).toLocaleString('en-GB') : '',
                 m?.start_time ? new Date(m.start_time).toLocaleString('en-GB') : '',
@@ -107,10 +107,7 @@ export default function LogbookWriterTab() {
 
         const fetchAllServices = async () => {
             const ids = activities.map(a => a.id);
-            const { data, error } = await supabase
-                .from('logbook_entries')
-                .select('id, vessel_activity_id, status, narrative_text, structured_fields, document_hash, message_snapshot, logbook_services(*)')
-                .in('vessel_activity_id', ids);
+            const { data, error } = await logbookService.fetchLogbookEntriesByActivityIds(ids);
 
             if (error) {
                 console.error('Failed to fetch logbook services:', error);
@@ -181,11 +178,7 @@ export default function LogbookWriterTab() {
         // If Operations and row is unread, mark it as read
         if (perms.approveLogbook && existingEntry?.entryId && !existingEntry?.structured_fields?.admin_reviewed) {
             const updatedFields = { ...existingEntry.structured_fields, admin_reviewed: true };
-            supabase
-                .from('logbook_entries')
-                .update({ structured_fields: updatedFields })
-                .eq('id', existingEntry.entryId)
-                .then(); // Fire and forget
+            logbookService.updateStructuredFields(existingEntry.entryId, updatedFields).then(); // Fire and forget
 
             // Update local state so it turns color immediately
             setServicesMap(prev => ({
@@ -206,7 +199,7 @@ export default function LogbookWriterTab() {
                 <div className="filter-group">
                     <Edit3 size={15} />
                     <span className="filter-label">
-                        {perms.approveLogbook || perms.isCrewAdmin ? 'Activity Submission Registry (Fleet Monitor)' : 'Formal Activity Submission — Command Responsibility'}
+                        {perms.approveLogbook || perms.isCrewAdmin ? 'Activity Submission Registry (Fleet Monitor)' : 'Formal Activity Submission â€” Command Responsibility'}
                     </span>
                 </div>
                 <div className="filter-group" style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
@@ -329,18 +322,18 @@ export default function LogbookWriterTab() {
                                                 <span className="badge-mini">{a.activity}</span> @ {a.geofence}
                                             </div>
                                         </td>
-                                        <td>{a.startTime ? fmt(a.startTime).replace('T', ' ') : '—'}</td>
-                                        <td>{a.endTime ? fmt(a.endTime).replace('T', ' ') : '—'}</td>
-                                        <td style={{ fontWeight: 'bold' }}>{entryMeta?.structured_fields?.actual_cargo_tonnes || '—'}</td>
+                                        <td>{a.startTime ? fmt(a.startTime).replace('T', ' ') : 'â€”'}</td>
+                                        <td>{a.endTime ? fmt(a.endTime).replace('T', ' ') : 'â€”'}</td>
+                                        <td style={{ fontWeight: 'bold' }}>{entryMeta?.structured_fields?.actual_cargo_tonnes || 'â€”'}</td>
                                         <td style={{ fontSize: '11px', color: '#0369a1', fontWeight: 'bold', background: 'rgba(2, 132, 199, 0.05)', textAlign: 'center', borderRadius: '4px' }}>
-                                            {a.aisStartDraught || '—'} / {a.aisEndDraught || '—'}
+                                            {a.aisStartDraught || 'â€”'} / {a.aisEndDraught || 'â€”'}
                                         </td>
-                                        <td style={{ fontWeight: 'bold' }}>{entryMeta?.structured_fields?.actual_bunker_tonnes || '—'}</td>
+                                        <td style={{ fontWeight: 'bold' }}>{entryMeta?.structured_fields?.actual_bunker_tonnes || 'â€”'}</td>
                                         <td style={{ textAlign: 'center' }}>
                                             {entryMeta?.structured_fields?.arrival_tug_count || 0} / {entryMeta?.structured_fields?.departure_tug_count || 0}
                                         </td>
                                         <td style={{ maxWidth: '150px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '11px', color: '#64748b' }} title={entryMeta?.narrative_text}>
-                                            {entryMeta?.narrative_text || '—'}
+                                            {entryMeta?.narrative_text || 'â€”'}
                                         </td>
                                         <td style={{ textAlign: 'center' }}>
                                             <button
@@ -358,9 +351,9 @@ export default function LogbookWriterTab() {
                                             <td className="hash-cell">
                                                 {entryMeta?.document_hash ? (
                                                     <span className="hash-display" title={entryMeta.document_hash}>
-                                                        {entryMeta.document_hash.substring(0, 8)}…
+                                                        {entryMeta.document_hash.substring(0, 8)}â€¦
                                                     </span>
-                                                ) : '—'}
+                                                ) : 'â€”'}
                                             </td>
                                         )}
                                     </tr>
@@ -431,11 +424,11 @@ export default function LogbookWriterTab() {
                                 <div className="grid grid-cols-2 gap-3 bg-slate-50/50 p-4 rounded-2xl border border-slate-100 text-[11px] font-bold">
                                     <div className="flex flex-col gap-0.5">
                                         <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">ATA (Arrived)</span>
-                                        <span className="text-slate-700">{a.startTime ? fmt(a.startTime).replace('T', ' ') : '—'}</span>
+                                        <span className="text-slate-700">{a.startTime ? fmt(a.startTime).replace('T', ' ') : 'â€”'}</span>
                                     </div>
                                     <div className="flex flex-col gap-0.5">
                                         <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">ATD (Departed)</span>
-                                        <span className="text-slate-700">{a.endTime ? fmt(a.endTime).replace('T', ' ') : '—'}</span>
+                                        <span className="text-slate-700">{a.endTime ? fmt(a.endTime).replace('T', ' ') : 'â€”'}</span>
                                     </div>
                                     <div className="flex flex-col gap-0.5">
                                         <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Cargo / Bunker</span>

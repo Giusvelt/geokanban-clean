@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { User, Phone, Mail, Ship, Save, Edit3, CheckCircle, AlertCircle, Anchor } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { useFleet } from '../context/DataContext';
 
@@ -36,7 +35,7 @@ export default function MobileCrewProfile() {
 
   const handleSave = async () => {
     if (!form.email.trim()) {
-      setError('Il campo Email è obbligatorio.');
+      setError('Il campo Email Ã¨ obbligatorio.');
       return;
     }
     setSaving(true);
@@ -156,7 +155,7 @@ export default function MobileCrewProfile() {
                   placeholder="Es. Marco Rossi"
                 />
               ) : (
-                <p className="text-sm font-bold text-on-surface">{form.display_name || '—'}</p>
+                <p className="text-sm font-bold text-on-surface">{form.display_name || 'â€”'}</p>
               )}
             </div>
           </div>
@@ -171,7 +170,7 @@ export default function MobileCrewProfile() {
                 <p className="text-[10px] font-black text-on-surface/30 uppercase tracking-widest">Email</p>
                 <span className="text-[8px] font-black text-red-400 uppercase">Obbligatoria</span>
               </div>
-              <p className="text-sm font-bold text-on-surface">{profile?.email || form.email || '—'}</p>
+              <p className="text-sm font-bold text-on-surface">{profile?.email || form.email || 'â€”'}</p>
               <p className="text-[10px] text-on-surface/30 mt-0.5">Modificabile solo dall'admin</p>
             </div>
           </div>
@@ -195,7 +194,7 @@ export default function MobileCrewProfile() {
                   placeholder="+39 320 000 0000"
                 />
               ) : (
-                <p className="text-sm font-bold text-on-surface">{form.phone || '—'}</p>
+                <p className="text-sm font-bold text-on-surface">{form.phone || 'â€”'}</p>
               )}
             </div>
           </div>
@@ -216,7 +215,7 @@ export default function MobileCrewProfile() {
                   placeholder="Es. 247123456"
                 />
               ) : (
-                <p className="text-sm font-bold text-on-surface">{form.mmsi || '—'}</p>
+                <p className="text-sm font-bold text-on-surface">{form.mmsi || 'â€”'}</p>
               )}
             </div>
           </div>
@@ -240,7 +239,7 @@ export default function MobileCrewProfile() {
                   ))}
                 </select>
               ) : (
-                <p className="text-sm font-bold text-on-surface">{myVessel?.name || '—'}</p>
+                <p className="text-sm font-bold text-on-surface">{myVessel?.name || 'â€”'}</p>
               )}
             </div>
           </div>

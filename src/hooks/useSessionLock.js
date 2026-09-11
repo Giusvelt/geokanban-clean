@@ -20,7 +20,7 @@
  */
 
 import { useEffect, useRef, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
+import { userService } from '../services/api/userService';
 
 // ─────────────────────────────────────────────
 // 🔒 IMPOSTARE A TRUE PER ATTIVARE IL SESSION LOCK

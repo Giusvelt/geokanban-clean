@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+﻿import React, { useState, useEffect } from 'react';
+import { authService } from '../services/api/authService';
 import { ShieldCheck, Check, AlertCircle, X, Loader, Smartphone } from 'lucide-react';
 
 /**
- * MFAEnrollModal — Guida l'utente attraverso l'iscrizione TOTP (prima volta).
+ * MFAEnrollModal â€” Guida l'utente attraverso l'iscrizione TOTP (prima volta).
  * Mostra il QR code da scannerizzare con Google Authenticator / Authy,
  * poi richiede il codice per confermare l'iscrizione.
  */
@@ -24,7 +24,7 @@ export default function MFAEnrollModal({ onEnrolled, onSkip, canSkip = false }) 
     const startEnrollment = async () => {
         setStep('loading');
         try {
-            const { data, error: enrollErr } = await supabase.auth.mfa.enroll({
+            const { data, error: enrollErr } = await authService.mfa.enroll({
                 factorType: 'totp',
                 issuer: 'GeoKanban',
                 friendlyName: 'GeoKanban Authenticator'
@@ -44,7 +44,7 @@ export default function MFAEnrollModal({ onEnrolled, onSkip, canSkip = false }) 
     const handleProceedToVerify = async () => {
         setLoading(true);
         try {
-            const { data: challenge, error: challengeErr } = await supabase.auth.mfa.challenge({ factorId });
+            const { data: challenge, error: challengeErr } = await authService.mfa.challenge({ factorId });
             if (challengeErr) throw challengeErr;
             setChallengeId(challenge.id);
             setStep('verify');
@@ -60,7 +60,7 @@ export default function MFAEnrollModal({ onEnrolled, onSkip, canSkip = false }) 
         setError('');
         setLoading(true);
         try {
-            const { error: verifyErr } = await supabase.auth.mfa.verify({
+            const { error: verifyErr } = await authService.mfa.verify({
                 factorId,
                 challengeId,
                 code: code.trim()
@@ -161,7 +161,7 @@ export default function MFAEnrollModal({ onEnrolled, onSkip, canSkip = false }) 
                                 fontSize: '15px', cursor: 'pointer'
                             }}
                         >
-                            {loading ? 'Loading...' : "I've scanned it — Continue"}
+                            {loading ? 'Loading...' : "I've scanned it â€” Continue"}
                         </button>
                     </div>
                 )}

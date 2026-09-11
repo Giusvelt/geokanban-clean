@@ -1,7 +1,7 @@
-import { supabase } from '../../lib/supabase';
+﻿import { supabase } from '../../lib/supabase';
 
 /**
- * userService.js — SOLID Service Layer
+ * userService.js â€” SOLID Service Layer
  * Centralizes all user management database queries and RPCs.
  * Used by: UserManagementTab.jsx, AddUserModal.jsx
  */
@@ -112,5 +112,46 @@ export const userService = {
         });
         if (error) throw error;
         return data;
+    },
+    async fetchUserProfile(userId) {
+        return await supabase
+            .from('user_profiles')
+            .select('*, companies(name), vessels(name)')
+            .eq('id', userId)
+            .single();
+    },
+    async updateLastSeen(userId) {
+        return await supabase
+            .from('user_profiles')
+            .update({ last_seen_at: new Date().toISOString() })
+            .eq('id', userId);
+    },
+    async updateUserProfile(userId, updates) {
+        return await supabase
+            .from('user_profiles')
+            .update(updates)
+            .eq('id', userId);
+    },
+    async updateSessionLock(userId, sessionToken, deviceId) {
+        return await supabase
+            .from('user_profiles')
+            .update({
+                session_token: sessionToken,
+                session_device_id: deviceId
+            })
+            .eq('id', userId);
+    },
+    async fetchSessionToken(userId) {
+        return await supabase
+            .from('user_profiles')
+            .select('session_token')
+            .eq('id', userId)
+            .single();
+    },
+    async clearSession(userId) {
+        return await supabase
+            .from('user_profiles')
+            .update({ session_token: null, session_device_id: null })
+            .eq('id', userId);
     }
 };

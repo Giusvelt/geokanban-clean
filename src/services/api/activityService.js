@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase';
+﻿import { supabase } from '../../lib/supabase';
 
 export const activityService = {
     async certifyMonthlySal(month, year) {
@@ -21,7 +21,7 @@ export const activityService = {
             query = query.lt('start_time', newEnd.toISOString())
                          .or(`end_time.gt.${newStart.toISOString()},end_time.is.null`);
         } else {
-            // Se la nuova attività non ha una fine, si sovrappone a tutto ciò che inizia dopo
+            // Se la nuova attivitÃ  non ha una fine, si sovrappone a tutto ciÃ² che inizia dopo
             // o che la contiene.
             query = query.or(`start_time.gte.${newStart.toISOString()},and(start_time.lt.${newStart.toISOString()},or(end_time.gt.${newStart.toISOString()},end_time.is.null))`);
         }
@@ -87,7 +87,7 @@ export const activityService = {
             }
         }
 
-        // Finalmente, inseriamo la nuova attività pulita
+        // Finalmente, inseriamo la nuova attivitÃ  pulita
         const { data, error } = await supabase
             .from('vessel_activity')
             .insert({
@@ -233,6 +233,19 @@ export const activityService = {
         return data;
     },
 
+        async fetchActivityLog(vesselId) {
+        let query = supabase
+            .from('vessel_activity')
+            .select(`n                id, vessel_id, activity_type, geofence_id, start_time, end_time, duration_minutes, source, status, export_flag,
+                vessels ( name, mmsi ),
+                geofences!vessel_activity_geofence_id_fkey ( name, nature ),
+                logbook_entries ( status, structured_fields ),
+                activity_messages ( id, is_read, sender_role )
+            `)
+            .order('start_time', { ascending: false });
+        if (vesselId) { query = query.eq('vessel_id', vesselId); }
+        return await query;
+    },
     async fetchActivitiesRange(vesselId, startDate, endDate) {
         let query = supabase
             .from('vessel_activity')
@@ -250,6 +263,17 @@ export const activityService = {
         const { data, error } = await query;
         if (error) throw error;
         return data;
+    },
+    async fetchActivityTypes() {
+        return await supabase.from('activities').select('*');
+    },
+    async insertActivityType(item) {
+        return await supabase.from('activities').insert(item).select().single();
+    },
+    async updateActivityType(id, updates) {
+        return await supabase.from('activities').update(updates).eq('id', id).select().single();
+    },
+    async deleteActivityType(id) {
+        return await supabase.from('activities').delete().eq('id', id);
     }
 };
-

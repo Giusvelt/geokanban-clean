@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
+import { healthService } from '../services/api/healthService';
 
 /**
  * useHealthCheck — Permanent system integrity verifier.
@@ -23,10 +23,7 @@ export function useHealthCheck() {
         try {
             // 0. Database Connection & KPI Engine
             // Usiamo parametri dummy per testare solo l'esistenza della funzione
-            const { error: kpiErr } = await supabase.rpc('sync_production_plan', { 
-                p_vessel_id: '00000000-0000-0000-0000-000000000000', 
-                p_period_name: 'HEALTH_CHECK' 
-            }).limit(1);
+            const { error: kpiErr } = await healthService.checkKPIEngine();
 
             if (kpiErr && kpiErr.message.includes('not found')) {
                 fail('Motore KPI', 'MANCANTE: La procedura di sincronizzazione automatica non è installata nel database.');
@@ -36,7 +33,7 @@ export function useHealthCheck() {
             }
 
             // 1. AIS Pulse (Latency)
-            const { data: lastPos } = await supabase.from('vessel_positions').select('created_at').order('created_at', { ascending: false }).limit(1);
+            const { data: lastPos } = await healthService.fetchLastPosition();
             if (lastPos?.[0]) {
                 const lastDate = new Date(lastPos[0].created_at);
                 const timeStr = lastDate.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -50,19 +47,16 @@ export function useHealthCheck() {
 
             // 2. Operational Load (24h)
             const dayAgo = new Date(Date.now() - 24*60*60*1000).toISOString();
-            const [ {count: p24}, {count: e24} ] = await Promise.all([
-                supabase.from('vessel_positions').select('*', { count: 'exact', head: true }).gt('created_at', dayAgo),
-                supabase.from('geofence_events').select('*', { count: 'exact', head: true }).gt('created_at', dayAgo)
-            ]);
+            const [ {count: p24}, {count: e24} ] = await healthService.fetchLoad24h(dayAgo);
             ok('Carico Operativo (24h)', `ATTIVITÀ: Processate ${p24 || 0} posizioni e ${e24 || 0} eventi di ingresso/uscita nelle ultime 24 ore.`);
 
             // 3. Vessels & Fleet
-            const { data: vessels, error: vErr } = await supabase.from('vessels').select('id, name, mmsi');
+            const { data: vessels, error: vErr } = await healthService.fetchVesselsHealth();
             if (vErr) fail('Stato Flotta', `ERRORE: Impossibile leggere la lista navi: ${vErr.message}`);
             else ok('Stato Flotta', `CONFIGURATA: ${vessels.length} navi registrate e monitorate dal sistema.`);
 
             // 4. Vessel Activity Integrity
-            const { data: activities } = await supabase.from('vessel_activity').select('id, status, source, start_event_id');
+            const { data: activities } = await healthService.fetchActivitiesHealth();
             if (activities) {
                 const active = activities.filter(a => a.status === 'active').length;
                 const orphanAuto = activities.filter(a => a.source === 'geofence' && !a.start_event_id).length;
@@ -71,7 +65,7 @@ export function useHealthCheck() {
             }
 
             // 5. User Security
-            const { data: profiles } = await supabase.from('user_profiles').select('id, role, is_blocked');
+            const { data: profiles } = await healthService.fetchProfilesHealth();
             if (profiles) {
                 const blocked = profiles.filter(p => p.is_blocked).length;
                 ok('Sicurezza e Accessi', `GESTITI: ${profiles.length} utenti totali (${blocked} bloccati per sicurezza).`);

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
+import { authService } from '../services/api/authService';
+import { userService } from '../services/api/userService';
 import { can } from '../lib/permissions';
 
 export function useUserProfile() {
@@ -8,7 +9,7 @@ export function useUserProfile() {
 
     const loadProfile = useCallback(async () => {
         setLoading(true);
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { user } } = await authService.getUser();
         if (!user) {
             setProfile(null);
             setLoading(false);
@@ -63,7 +64,7 @@ export function useUserProfile() {
     useEffect(() => {
         if (!profile?.id) return;
         const updateHeartbeat = async () => {
-            await supabase.from('user_profiles').update({ last_seen_at: new Date().toISOString() }).eq('id', profile.id);
+            await userService.updateLastSeen(profile.id);
         };
         updateHeartbeat();
         const interval = setInterval(updateHeartbeat, 60_000);
@@ -89,7 +90,7 @@ export function useUserProfile() {
             if (updates.isBlocked !== undefined) mapped.is_blocked = updates.isBlocked;
             if (updates.custom_overrides !== undefined) mapped.custom_overrides = updates.custom_overrides;
 
-            const { error } = await supabase.from('user_profiles').update(mapped).eq('id', profile.id);
+            const { error } = await userService.updateUserProfile(profile.id, mapped);
             if (!error) await loadProfile();
             return { error };
         }, 

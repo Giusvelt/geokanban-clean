@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { supabase } from '../lib/supabase';
+﻿import React, { useState } from 'react';
+import { authService } from '../services/api/authService';
 import { Anchor, Lock, AlertCircle, User, Eye, EyeOff } from 'lucide-react';
 import MFAVerifyStep from './MFAVerifyStep';
 import MFAEnrollModal from './MFAEnrollModal';
 
 /**
- * Login V2 — Supporta MFA TOTP a due passaggi.
+ * Login V2 â€” Supporta MFA TOTP a due passaggi.
  *
  * Flusso:
- *  1. Utente inserisce email + password → signInWithPassword
- *  2a. Se l'utente NON ha MFA → onLogin() direttamente (Assurance Level 1)
- *  2b. Se l'utente HA MFA → mostra MFAVerifyStep (richiede codice TOTP)
- *  2c. Se l'utente HA MFA ma non è iscritto → mostra MFAEnrollModal (prima volta)
+ *  1. Utente inserisce email + password â†’ signInWithPassword
+ *  2a. Se l'utente NON ha MFA â†’ onLogin() direttamente (Assurance Level 1)
+ *  2b. Se l'utente HA MFA â†’ mostra MFAVerifyStep (richiede codice TOTP)
+ *  2c. Se l'utente HA MFA ma non Ã¨ iscritto â†’ mostra MFAEnrollModal (prima volta)
  */
 export default function Login({ onLogin }) {
     const [email, setEmail] = useState('');
@@ -28,7 +28,7 @@ export default function Login({ onLogin }) {
         setLoading(true);
 
         try {
-            const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
+            const { data, error: authError } = await authService.signIn({ email, password });
 
             if (authError) {
                 setError(authError.message);
@@ -42,7 +42,7 @@ export default function Login({ onLogin }) {
                 return;
             }
 
-            // 1. Controlla se l'utente è bloccato
+            // 1. Controlla se l'utente Ã¨ bloccato
             const { data: profile } = await supabase
                 .from('user_profiles')
                 .select('is_blocked, role')
@@ -50,18 +50,18 @@ export default function Login({ onLogin }) {
                 .single();
 
             if (profile?.is_blocked) {
-                await supabase.auth.signOut();
+                await authService.signOut();
                 setError('Account sospeso. Contatta l\'amministratore.');
                 setLoading(false);
                 return;
             }
 
-            // 2. Controlla se l'utente ha già fattori MFA iscritti
-            const { data: factorsData } = await supabase.auth.mfa.listFactors();
+            // 2. Controlla se l'utente ha giÃ  fattori MFA iscritti
+            const { data: factorsData } = await authService.mfa.listFactors();
             const hasTotp = factorsData?.totp?.length > 0;
 
             if (hasTotp) {
-                // Utente con MFA attivo → richiedi codice TOTP
+                // Utente con MFA attivo â†’ richiedi codice TOTP
                 setStep('mfa-verify');
             } else {
                 // Imponi la configurazione MFA a chi ha ruoli "amministrativi" o con molti permessi
@@ -70,7 +70,7 @@ export default function Login({ onLogin }) {
                 if (profile?.role === 'operation' || profile?.role === 'operation_admin' || profile?.role === 'crew_admin') {
                     setStep('mfa-enroll');
                 } else {
-                    // I "crew" (le navi) non sono obbligati a fare MFA, login molto più semplice!
+                    // I "crew" (le navi) non sono obbligati a fare MFA, login molto piÃ¹ semplice!
                     completeLogin(data.user);
                 }
                 */
@@ -94,35 +94,35 @@ export default function Login({ onLogin }) {
     };
 
     const handleMFAVerified = async () => {
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { user } } = await authService.getUser();
         completeLogin(user);
     };
 
     const handleBack = async () => {
-        await supabase.auth.signOut();
+        await authService.signOut();
         setStep('credentials');
         setError('');
     };
 
-    // ── Step 2b: verifica TOTP ──
+    // â”€â”€ Step 2b: verifica TOTP â”€â”€
     if (step === 'mfa-verify') {
         return <MFAVerifyStep onVerified={handleMFAVerified} onBack={handleBack} />;
     }
 
-    // ── Step 2c: iscrizione TOTP (prima volta) ──
+    // â”€â”€ Step 2c: iscrizione TOTP (prima volta) â”€â”€
     if (step === 'mfa-enroll') {
         return (
             <MFAEnrollModal
                 canSkip={false}
                 onEnrolled={async () => {
-                    const { data: { user } } = await supabase.auth.getUser();
+                    const { data: { user } } = await authService.getUser();
                     completeLogin(user);
                 }}
             />
         );
     }
 
-    // ── Step 1: email + password ──
+    // â”€â”€ Step 1: email + password â”€â”€
     return (
         <div className="min-h-screen flex items-center justify-center bg-surface relative overflow-hidden font-inter p-4">
             {/* Background Decorative Elements */}
@@ -176,7 +176,7 @@ export default function Login({ onLogin }) {
                                 type={showPassword ? "text" : "password"}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                placeholder="••••••••••••"
+                                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                                 className="w-full bg-surface-low/50 hover:bg-surface-low focus:bg-white border-none focus:ring-2 focus:ring-primary/20 rounded-lg py-3.5 pl-12 pr-12 text-[15px] font-medium transition-all outline-none"
                                 required
                             />

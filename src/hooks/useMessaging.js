@@ -1,9 +1,6 @@
-import { useState, useCallback, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+﻿import { useState, useCallback, useEffect } from 'react';
+import { messagesService } from '../services/api/messagesService';
 
-/**
- * Hook to manage the messaging thread for a specific activity.
- */
 export function useMessaging(activityId, userId) {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -13,11 +10,7 @@ export function useMessaging(activityId, userId) {
         if (!activityId) return;
         setLoading(true);
         try {
-            const { data, error } = await supabase
-                .from('activity_messages')
-                .select('*, sender:user_profiles(display_name)')
-                .eq('vessel_activity_id', activityId)
-                .order('created_at', { ascending: true });
+            const { data, error } = await messagesService.fetchMessagesForHook(activityId);
             if (error) throw error;
             setMessages(data || []);
         } catch (err) {
@@ -29,39 +22,14 @@ export function useMessaging(activityId, userId) {
 
     useEffect(() => {
         fetchMessages();
-
-        // Real-time subscription
-        const channel = supabase
-            .channel(`activity-messages-${activityId}`)
-            .on(
-                'postgres_changes',
-                { event: 'INSERT', schema: 'public', table: 'activity_messages', filter: `vessel_activity_id=eq.${activityId}` },
-                () => {
-                    fetchMessages();
-                }
-            )
-            .subscribe();
-
-        return () => {
-            supabase.removeChannel(channel);
-        };
+        const channel = messagesService.subscribeToActivity(activityId, () => { fetchMessages(); });
+        return () => { messagesService.unsubscribe(channel); };
     }, [activityId, fetchMessages]);
 
     const sendMessage = async (text, role = 'crew', includeInLogbook = false) => {
         if (!activityId || !userId) return { success: false, error: 'Context missing' };
         try {
-            const { error } = await supabase
-                .from('activity_messages')
-                .insert({
-                    vessel_activity_id: activityId,
-                    sender_id: userId,
-                    sender_role: role,
-                    message_text: text,
-                    included_in_logbook: includeInLogbook,
-                    visibility: includeInLogbook ? 'exported' : 'internal'
-                });
-            if (error) throw error;
-            // Subscription will update messages
+            await messagesService.sendMessage({ activityId, senderId: userId, senderRole: role, messageText: text });
             return { success: true };
         } catch (err) {
             return { success: false, error: err.message };
@@ -70,13 +38,7 @@ export function useMessaging(activityId, userId) {
 
     const toggleInLogbook = async (messageId, included) => {
         try {
-            const { error } = await supabase
-                .from('activity_messages')
-                .update({
-                    included_in_logbook: included,
-                    visibility: included ? 'exported' : 'internal'
-                })
-                .eq('id', messageId);
+            const { error } = await messagesService.toggleInLogbook(messageId, included);
             if (error) throw error;
             fetchMessages();
             return { success: true };
@@ -85,12 +47,5 @@ export function useMessaging(activityId, userId) {
         }
     };
 
-    return {
-        messages,
-        loading,
-        error,
-        sendMessage,
-        toggleInLogbook,
-        refresh: fetchMessages
-    };
+    return { messages, loading, error, sendMessage, toggleInLogbook, refresh: fetchMessages };
 }
