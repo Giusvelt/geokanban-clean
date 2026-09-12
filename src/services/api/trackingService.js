@@ -145,8 +145,6 @@ export async function saveTrackingPeriods(vesselId, periods) {
         if (error) throw error;
     }
 }
-import { supabase } from '../lib/supabase';
-
 export async function fetchLatestTimestamp() {
     const { data, error } = await supabase
         .from('vessel_tracking')
