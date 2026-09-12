@@ -34,7 +34,7 @@ const YardForecastsTab = lazy(() => import('./components/YardForecastsTab'));
 import TelemetryAlertBanner from './components/TelemetryAlertBanner';
 
 
-import { Edit3, MessageSquare, User, Play, Calendar as CalendarIcon, Download, AlertCircle, ArrowLeft, ArrowRight, History, Clock, Database, Map as MapIcon, Anchor, Info, LogOut, CheckCircle2, ChevronRight, Menu, X, Shield, Settings, ShieldCheck, Mail, Phone, BookOpen, Target, Activity, Send, Cloud, Smartphone, TableProperties } from 'lucide-react';
+import { Bot, Calendar, Edit3, MessageSquare, User, Play, Calendar as CalendarIcon, Download, AlertCircle, ArrowLeft, ArrowRight, History, Clock, Database, Map as MapIcon, Anchor, Info, LogOut, CheckCircle2, ChevronRight, Menu, X, Shield, Settings, ShieldCheck, Mail, Phone, BookOpen, Target, Activity, Send, Cloud, Smartphone, TableProperties } from 'lucide-react';
 import './index.css';
 
 function ActivityDashboard({ onSignOut }) {
