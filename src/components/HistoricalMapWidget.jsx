@@ -4,16 +4,11 @@ import VesselMap from './VesselMap';
 import { useFleet, useOperations } from '../context/DataContext';
 import { Calendar as CalendarIcon, Filter, AlertCircle, RefreshCw } from 'lucide-react';
 
-
 export default function HistoricalMapWidget({ height = "350px" }) {
     const { vessels } = useFleet();
     const { geofences } = useOperations();
 
-    const [startDate, setStartDate] = useState(() => {
-        const d = new Date();
-        d.setDate(d.getDate() - 3);
-        return d.toISOString().split('T')[0];
-    });
+    const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [selectedVesselFilter, setSelectedVesselFilter] = useState('All');
     
@@ -37,7 +32,7 @@ export default function HistoricalMapWidget({ height = "350px" }) {
             if (!start || !end) {
                 const latest = await fetchLatestTimestamp();
                 end = new Date(latest);
-                start = new Date(latest.getTime() - (7 * 24 * 60 * 60 * 1000)); // last 7 days from latest data
+                start = new Date(latest.getTime() - (7 * 24 * 60 * 60 * 1000));
                 setStartDate(start.toISOString().split('T')[0]);
                 setEndDate(end.toISOString().split('T')[0]);
             }
@@ -57,7 +52,6 @@ export default function HistoricalMapWidget({ height = "350px" }) {
             minTime.current = firstTime;
             maxTime.current = lastTime;
             
-            // Default to highest timestamp
             setVirtualTime(lastTime);
         } catch (err) {
             setErrorMsg(err.message);
@@ -65,6 +59,39 @@ export default function HistoricalMapWidget({ height = "350px" }) {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        handleLoadData();
+    }, []); 
+
+    const currentPositions = useMemo(() => {
+        if (!trackingData.length || !virtualTime) return [];
+        const latest = {};
+        for (let i = 0; i < trackingData.length; i++) {
+            const row = trackingData[i];
+            if (selectedVesselFilter !== 'All' && row.vessel_id !== selectedVesselFilter) continue;
+            
+            const t = new Date(row.timestamp).getTime();
+            if (t <= virtualTime) {
+                if (!latest[row.vessel_id] || new Date(latest[row.vessel_id].timestamp).getTime() < t) {
+                    latest[row.vessel_id] = row;
+                }
+            }
+        }
+        
+        return Object.values(latest).map(track => {
+            const v = vessels.find(v => v.id === track.vessel_id) || { name: 'Unknown' };
+            return {
+                vessel: v.name,
+                vesselId: v.id,
+                lat: track.lat,
+                lon: track.lon,
+                speed: track.speed,
+                heading: track.heading,
+                course: track.course,
+                status: track.status,
+                lastUpdate: track.timestamp
+            };
         });
     }, [trackingData, virtualTime, selectedVesselFilter, vessels]);
 
