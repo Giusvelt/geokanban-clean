@@ -162,7 +162,7 @@ function ActivityDashboard({ onSignOut }) {
           <div className="w-10 h-10 lg:w-14 lg:h-14 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30 border border-white/20"><Anchor className="text-white w-6 h-6 lg:w-8 lg:h-8" /></div>
           <div className="flex flex-col">
             <h1 className="font-manrope font-extrabold text-xl lg:text-2xl text-on-surface tracking-tight leading-none mb-1">GeoKanban <span className="text-[10px] font-bold text-primary/40 align-top ml-1">v3.25</span></h1>
-            <p className="text-[10px] lg:text-xs font-black text-primary uppercase tracking-[0.2em] opacity-80 leading-none">Breakwater Fleet Tracker â€” Genova</p>
+            <p className="text-[10px] lg:text-xs font-black text-primary uppercase tracking-[0.2em] opacity-80 leading-none">Breakwater Fleet Tracker - Genova</p>
           </div>
         </div>
         <div className="flex items-center gap-4 lg:gap-6">
@@ -268,3 +268,4 @@ export default function App() {
   if (!user) return <Suspense fallback={null}><LandingPage onLogin={setUser} /></Suspense>;
   return <DataProvider><Toaster position="bottom-right" /><ActivityDashboard onSignOut={() => authService.signOut()} /></DataProvider>;
 }
+

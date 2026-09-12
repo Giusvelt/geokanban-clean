@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+﻿import React, { useMemo, useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Polygon, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { Box, Maximize2, Waves, Wind, ArrowUp } from 'lucide-react';
@@ -26,7 +26,7 @@ const VESSEL_COLORS = [
 
 // Custom vessel icon builder
 const createVesselIcon = (heading = 0, isMoving = false, isStale = false, customColor = '#3b82f6', isOffHire = false) => {
-    // Colore stabile della nave dalla legenda. Se il dato è vecchio (>12h), usiamo Arancio Scuro come fallback.
+    // Colore stabile della nave dalla legenda. Se il dato Ã¨ vecchio (>12h), usiamo Arancio Scuro come fallback.
     const baseColor = isStale ? '#d84315' : customColor;
 
     // Dimensioni: 18px per tutte le navi come richiesto
@@ -61,7 +61,7 @@ const createVesselIcon = (heading = 0, isMoving = false, isStale = false, custom
     });
 };
 
-// Geofence nature → color
+// Geofence nature â†’ color
 const geoColor = (nature) => {
     const map = {
         'loading_site': '#10b981',
@@ -79,7 +79,7 @@ const getWindDirectionCardinal = (deg) => {
     if (deg === null || deg === undefined) return '';
     const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
     const index = Math.round(deg / 22.5) % 16;
-    return `${Math.round(deg)}° ${directions[index]}`;
+    return `${Math.round(deg)}Â° ${directions[index]}`;
 };
 
 export default function VesselMap({ geofences = [], vesselPositions = [], height = '100%', offHireVessels = {} }) {
@@ -131,7 +131,7 @@ export default function VesselMap({ geofences = [], vesselPositions = [], height
         'SIDER REBECCA': '#FFFFFF', // Bianco
     };
 
-    // Mappa vessel_id → colore stabile sincronizzato
+    // Mappa vessel_id â†’ colore stabile sincronizzato
     const vesselColorMap = useMemo(() => {
         const map = {};
         const activeVesselsList = (dbVessels || []).filter(v => v.tracking_active);
@@ -210,8 +210,8 @@ export default function VesselMap({ geofences = [], vesselPositions = [], height
                 <InvalidateMap />
                 <MapEvents />
                 <TileLayer
-                    url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                    attribution='&copy; CartoDB'
+                    url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
+                    attribution='&copy; Esri'
                 />
 
 
@@ -240,7 +240,7 @@ export default function VesselMap({ geofences = [], vesselPositions = [], height
                 {validPositions.map(pos => {
                     const vId = pos.vesselId || pos.vessel_id;
                     const customColor = vesselColorMap[vId] || '#3b82f6';
-                    // Usa heading, ma se è 0, assente o 511 (non valido), usa course (COG)
+                    // Usa heading, ma se Ã¨ 0, assente o 511 (non valido), usa course (COG)
                     const effectiveHeading = (pos.heading && pos.heading !== 511 && pos.heading !== 0) ? pos.heading : (pos.course || pos.cog || 0);
                     
                     const isMoored = pos.status?.toLowerCase().includes('moored') || pos.status?.toLowerCase().includes('anchor');
@@ -259,8 +259,8 @@ export default function VesselMap({ geofences = [], vesselPositions = [], height
                                 <span style={{ fontSize: '11px' }}>
                                     Speed: {effectiveSpeed.toFixed(1)} kn<br />
                                     Status: {pos.status}<br />
-                                Last Update: {pos.timestamp || pos.lastUpdate ? new Date(pos.timestamp || pos.lastUpdate).toLocaleString() : '—'}<br />
-                                {pos.isStale && <span style={{ color: '#f59e0b', fontWeight: 'bold' }}>● Offline ({'>'}12h)</span>}
+                                Last Update: {pos.timestamp || pos.lastUpdate ? new Date(pos.timestamp || pos.lastUpdate).toLocaleString() : 'â€”'}<br />
+                                {pos.isStale && <span style={{ color: '#f59e0b', fontWeight: 'bold' }}>â— Offline ({'>'}12h)</span>}
                                 </span>
                             </Popup>
                         </Marker>
@@ -275,14 +275,14 @@ export default function VesselMap({ geofences = [], vesselPositions = [], height
                     <div className="flex flex-col gap-1.5">
                         <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-300">
                             <Wind size={11} className="text-amber-500" />
-                            <span>Vento: {meteo.wind_speed ? `${meteo.wind_speed.toFixed(0)} kn` : '—'} {meteo.raw_data?.forecast?.wind_direction_10m !== undefined ? `(${getWindDirectionCardinal(meteo.raw_data.forecast.wind_direction_10m)})` : ''}</span>
+                            <span>Vento: {meteo.wind_speed ? `${meteo.wind_speed.toFixed(0)} kn` : 'â€”'} {meteo.raw_data?.forecast?.wind_direction_10m !== undefined ? `(${getWindDirectionCardinal(meteo.raw_data.forecast.wind_direction_10m)})` : ''}</span>
                             {meteo.raw_data?.forecast?.wind_direction_10m !== undefined && (
                                 <ArrowUp size={10} className="text-amber-500 inline-block transition-transform ml-0.5" style={{ transform: `rotate(${meteo.raw_data.forecast.wind_direction_10m}deg)` }} />
                             )}
                         </div>
                         <div className={`flex items-center gap-1.5 text-[10px] ${meteo.wave_height > 1.0 ? 'text-red-500 font-extrabold text-xs' : 'font-bold text-slate-300'}`}>
                             <Waves size={11} className={meteo.wave_height > 1.0 ? 'text-red-500' : 'text-cyan-400'} />
-                            <span>Onda: {meteo.wave_height ? `${meteo.wave_height.toFixed(1)} m` : '—'}</span>
+                            <span>Onda: {meteo.wave_height ? `${meteo.wave_height.toFixed(1)} m` : 'â€”'}</span>
                         </div>
                     </div>
                 ) : (
@@ -292,3 +292,4 @@ export default function VesselMap({ geofences = [], vesselPositions = [], height
         </div>
     );
 }
+
