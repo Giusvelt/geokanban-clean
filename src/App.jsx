@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Toaster } from 'react-hot-toast';
 import { DataProvider, useFleet, useOperations } from './context/DataContext';
 import { authService } from './services/api/authService';
