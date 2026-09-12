@@ -1,5 +1,5 @@
-/**
- * trackingService.js — Queries per vessel_tracking, user_profiles overrides e vessel_tracking_periods.
+﻿/**
+ * trackingService.js â€” Queries per vessel_tracking, user_profiles overrides e vessel_tracking_periods.
  * Centralizza TUTTE le chiamate Supabase relative al tracking storico delle navi.
  * Usato da: RewindMapTab, VesselMap, DBManager.
  */
@@ -55,7 +55,7 @@ export async function fetchUserCustomOverrides(userId) {
 
 /**
  * Legge i custom_overrides del profilo operation_admin (o operation).
- * Usato da VesselMap per il toggle globale di visibilità geofence.
+ * Usato da VesselMap per il toggle globale di visibilitÃ  geofence.
  * @returns {Promise<object|null>}
  */
 export async function fetchAdminCustomOverrides() {
@@ -87,8 +87,8 @@ export async function updateUserCustomOverrides(userId, updatedOverrides) {
 /**
  * Sottoscrive ai cambiamenti realtime su user_profiles per aggiornamento overrides admin.
  * Sostituisce il canale inline in VesselMap.
- * @param {Function} onUpdate — callback(payload)
- * @returns {RealtimeChannel} — chiamare supabase.removeChannel() per cleanup
+ * @param {Function} onUpdate â€” callback(payload)
+ * @returns {RealtimeChannel} â€” chiamare supabase.removeChannel() per cleanup
  */
 export function subscribeToAdminProfileChanges(onUpdate) {
     return supabase
@@ -117,7 +117,7 @@ export async function fetchTrackingPeriods(vesselId) {
  * Salva (upsert + delete differenziale) i periodi di tracking per una nave.
  * Confronta lo stato attuale nel DB con quello passato e applica solo le differenze.
  * @param {string} vesselId
- * @param {Array} periods — array corrente (include temp-* per i nuovi record)
+ * @param {Array} periods â€” array corrente (include temp-* per i nuovi record)
  * @returns {Promise<void>}
  */
 export async function saveTrackingPeriods(vesselId, periods) {
@@ -144,4 +144,16 @@ export async function saveTrackingPeriods(vesselId, periods) {
         const { error } = await supabase.from('vessel_tracking_periods').upsert(toUpsert);
         if (error) throw error;
     }
+}
+import { supabase } from '../lib/supabase';
+
+export async function fetchLatestTimestamp() {
+    const { data, error } = await supabase
+        .from('vessel_tracking')
+        .select('timestamp')
+        .order('timestamp', { ascending: false })
+        .limit(1);
+    if (error) return new Date();
+    if (data && data.length > 0) return new Date(data[0].timestamp);
+    return new Date();
 }

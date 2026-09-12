@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { fetchTrackingHistory } from '../services/api/trackingService';
+import { fetchTrackingHistory, fetchLatestTimestamp } from '../services/api/trackingService';
 import VesselMap from './VesselMap';
 import { useFleet, useOperations } from '../context/DataContext';
 import { AlertCircle, Anchor } from 'lucide-react';
@@ -23,8 +23,9 @@ export default function RTFTTab() {
         const loadDemoData = async () => {
             setLoading(true);
             try {
-                // Fetch last 24h from right now
-                const end = new Date();
+                // Trova l'ultimo timestamp disponibile per mostrare sempre un demo di 24h
+                const latest = await fetchLatestTimestamp();
+                const end = new Date(latest);
                 const start = new Date(end.getTime() - (24 * 60 * 60 * 1000));
 
                 const allData = await fetchTrackingHistory(start, end);
@@ -39,7 +40,7 @@ export default function RTFTTab() {
                     maxTime.current = lastTime;
                     setVirtualTime(firstTime);
                 } else {
-                    setErrorMsg("Nessun dato telemetrico nelle ultime 24 ore.");
+                    setErrorMsg("Nessun dato telemetrico nelle ultime 24 ore (relative all'ultimo log).");
                 }
             } catch (err) {
                 if (isMounted) setErrorMsg(err.message);
