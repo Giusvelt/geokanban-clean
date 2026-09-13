@@ -1,3 +1,4 @@
+import { supabase } from '../lib/supabase';
 import { useState, useEffect, useCallback } from 'react';
 import { authService } from '../services/api/authService';
 import { userService } from '../services/api/userService';
@@ -97,3 +98,4 @@ export function useUserProfile() {
         reloadProfile: loadProfile 
     };
 }
+
